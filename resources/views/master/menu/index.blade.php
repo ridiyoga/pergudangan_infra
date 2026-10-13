@@ -49,8 +49,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn_create_menu">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="btn_create_menu">Simpan</button>
             </div>
         </div>
     </div>
@@ -64,14 +64,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form_hapus_menu">
+                <div class="d-flex justify-content-center">
+                    <i class="bi bi-exclamation-circle-fill text-danger"></i>&nbsp;
+                    <p>Apakah anda ingin menghapus data ini?</p>
+                </div>
+                <form id="form_delete_menu">
                     @csrf
-                    <input type="text" class="form-control" id="id_menu_delete" name="id_menu_delete">
+                    <input type="hidden" class="form-control" id="id_menu_delete" name="id_menu_delete">
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn_create_menu">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="btn_delete_menu">Hapus</button>
             </div>
         </div>
     </div>
@@ -95,6 +99,11 @@
 
         $(document).on('click', '#btn_tambah_menu', function(e) {
             $('#modal_menu').modal('show');
+        });
+        $(document).on('click', '#btn_delete_datatable', function(e) {
+            var id = $(this).data("id");
+            $('#id_menu_delete').val(id);
+            $('#modal_delete_menu').modal('show');
         });
         const table = $('#tabel_menu').DataTable({
             processing: true,
@@ -172,6 +181,50 @@
                     Swal.fire({
                         title: 'Error!',
                         text: xhr.responseJSON?.message || 'Data Gagal Disimpan',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+        $(document).on('click', '#btn_delete_menu', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ url('/menu_delete') }}",
+                type: "POST",
+                data: $('#form_delete_menu').serialize(),
+                dataType: 'json',
+
+                success: function(data) {
+                    if (data.errors) {
+                        showValidationErrors(data.errors);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: 'Data Berhasil Dihapus',
+                        icon: 'success'
+                    });
+
+                    $('#form_delete_menu')[0].reset();
+                    bootstrap.Modal.getOrCreateInstance(
+                        document.getElementById('modal_delete_menu')
+                    ).hide();
+
+                    table.ajax.reload();
+                },
+
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        showValidationErrors(errors);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: xhr.responseJSON?.message || 'Data Gagal Dihapus',
                         icon: 'error'
                     });
                 }

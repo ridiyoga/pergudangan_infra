@@ -61,16 +61,47 @@ class MasterMenuController extends Controller
         return DataTables::of($data)
             ->addColumn('aksi', function ($row) {
                 $action = '
-                            <button class="btn btn-warning m-1" id="btn_update_menu"
+                            <button class="btn btn-warning m-1" id="btn_update_datatable"
                                 data-id="' . $row->id . '"
                                 data-nama_menu="' . $row->nama_menu . '"
                                 data-route="' . $row->route . '"
                                 data-icon="' . $row->icon . '">
                                 <i class="bi bi-pencil"></i></button>';
-                $btn = $action . '<button id="btn_delete_menu" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
+                $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
                 return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
+    }
+    public function delete(Request $request)
+    {
+        try {
+            $rules = [
+                'id_menu_delete' => 'required',
+
+            ];
+            $messages = [
+                'id_menu_delete.required' => 'Terjadi kesalahan',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 400,
+                    'errors' => $validator->errors(),
+                ]);
+            }
+
+            $menu = Menu::where('id', $request->id_menu_delete)->first();
+
+            $menu->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu berhasil disimpan',
+            ], 201);
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+        }
     }
 }
