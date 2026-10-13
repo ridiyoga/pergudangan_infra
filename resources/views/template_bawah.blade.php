@@ -1,7 +1,6 @@
 </div>
 
 <button class="sidebar-backdrop d-none" id="sidebarBackdrop" type="button" aria-label="Tutup navigasi"></button>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     $(function() {
         const $sidebar = $('#sidebar');
