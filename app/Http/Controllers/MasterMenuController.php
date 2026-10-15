@@ -12,8 +12,8 @@ class MasterMenuController extends Controller
 {
     public function index()
     {
-        $title = 'Home';
-        return view('master/menu/index', compact('title'));
+        $menu = Menu::orderBy('nama_menu')->get();
+        return view('master/menu/index', compact('menu'));
     }
     public function create(Request $request)
     {
@@ -94,6 +94,46 @@ class MasterMenuController extends Controller
             $menu = Menu::where('id', $request->id_menu_delete)->first();
 
             $menu->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu berhasil disimpan',
+            ], 201);
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+    public function update(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $rules = [
+                'nama_menu' => 'required',
+                'route' => 'required',
+                'icon' => 'required',
+
+            ];
+            $messages = [
+                'nama_menu.required' => 'Nama Menu wajib diisi',
+                'route.required' => 'Route wajib diisi',
+                'icon.required' => 'Icon wajib diisi',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 400,
+                    'errors' => $validator->errors(),
+                ]);
+            }
+
+            Menu::where('id', $request->id_menu_update)->update([
+                'id' => Uuid::uuid4(),
+                'nama_menu' => $request->nama_menu,
+                'route' => $request->route,
+                'icon' => $request->icon,
+                'created_at' => now(),
+            ]);
 
             return response()->json([
                 'success' => true,

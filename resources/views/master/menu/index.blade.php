@@ -36,15 +36,16 @@
                     @csrf
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Nama Menu</label>
-                        <input type="text" class="form-control" id="nama_menu" name="nama_menu">
+                        <input type="text" class="form-control" placeholder="Nama Menu" id="nama_menu_add"
+                            name="nama_menu">
                     </div>
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Route</label>
-                        <input type="text" class="form-control" id="route" name="route">
+                        <input type="text" class="form-control" placeholder="Route" id="route_add" name="route">
                     </div>
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Bootstrap Icon</label>
-                        <input type="text" class="form-control" id="icon" name="icon">
+                        <input type="text" class="form-control" placeholder="bi bi-xx" id="icon_add" name="icon">
                     </div>
                 </form>
             </div>
@@ -80,6 +81,39 @@
         </div>
     </div>
 </div>
+{{-- Modal Update --}}
+<div class="modal fade" id="modal_update_menu" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form_update_menu">
+                    @csrf
+                    <div class="mb-2">
+                        <label for="nama_menu" class="form-label">Nama Menu</label>
+                        <input type="hidden" class="form-control" id="id_menu_update" name="id_menu_update">
+                        <input type="text" class="form-control" id="nama_menu_update" name="nama_menu">
+                    </div>
+                    <div class="mb-2">
+                        <label for="nama_menu" class="form-label">Route</label>
+                        <input type="text" class="form-control" id="route_update" name="route">
+                    </div>
+                    <div class="mb-2">
+                        <label for="nama_menu" class="form-label">Bootstrap Icon</label>
+                        <input type="text" class="form-control" id="icon_update" name="icon">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="btn_update_menu">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- DataTables CSS -->
@@ -94,6 +128,8 @@
                 title: 'Validasi gagal',
                 text: Object.values(errors).flat().join('\n'),
                 icon: 'error'
+            }).then(() => {
+                location.reload();
             });
         }
 
@@ -104,6 +140,17 @@
             var id = $(this).data("id");
             $('#id_menu_delete').val(id);
             $('#modal_delete_menu').modal('show');
+        });
+        $(document).on('click', '#btn_update_datatable', function(e) {
+            var id = $(this).data("id");
+            var nama_menu = $(this).data("nama_menu");
+            var route = $(this).data("route");
+            var icon = $(this).data("icon");
+            $('#id_menu_update').val(id);
+            $('#nama_menu_update').val(nama_menu);
+            $('#route_update').val(route);
+            $('#icon_update').val(icon);
+            $('#modal_update_menu').modal('show');
         });
         const table = $('#tabel_menu').DataTable({
             processing: true,
@@ -161,14 +208,15 @@
                         title: 'Sukses!',
                         text: 'Data Berhasil Disimpan',
                         icon: 'success'
+                    }).then(() => {
+                        location.reload();
                     });
 
                     $('#form_tambah_menu')[0].reset();
-                    bootstrap.Modal.getOrCreateInstance(
-                        document.getElementById('modal_menu')
-                    ).hide();
+                    $('#modal_menu').hide();
 
                     table.ajax.reload();
+
                 },
 
                 error: function(xhr) {
@@ -182,6 +230,8 @@
                         title: 'Error!',
                         text: xhr.responseJSON?.message || 'Data Gagal Disimpan',
                         icon: 'error'
+                    }).then(() => {
+                        location.reload();
                     });
                 }
             });
@@ -205,14 +255,15 @@
                         title: 'Sukses!',
                         text: 'Data Berhasil Dihapus',
                         icon: 'success'
+                    }).then(() => {
+                        location.reload();
                     });
 
                     $('#form_delete_menu')[0].reset();
-                    bootstrap.Modal.getOrCreateInstance(
-                        document.getElementById('modal_delete_menu')
-                    ).hide();
+                    $('#modal_delete_menu').hide();
 
                     table.ajax.reload();
+
                 },
 
                 error: function(xhr) {
@@ -226,6 +277,56 @@
                         title: 'Error!',
                         text: xhr.responseJSON?.message || 'Data Gagal Dihapus',
                         icon: 'error'
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            });
+        });
+        $(document).on('click', '#btn_update_menu', function(e) {
+            e.preventDefault();
+            // console.log('asoy');
+
+            $.ajax({
+                url: "{{ url('/menu_update') }}",
+                type: "POST",
+                data: $('#form_update_menu').serialize(),
+                dataType: 'json',
+
+                success: function(data) {
+                    if (data.errors) {
+                        showValidationErrors(data.errors);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: 'Data Berhasil Disimpan',
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+
+                    $('#form_update_menu')[0].reset();
+                    $('#modal_update_menu').hide();
+
+                    table.ajax.reload();
+
+                },
+
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        showValidationErrors(errors);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: xhr.responseJSON?.message || 'Data Gagal Disimpan',
+                        icon: 'error'
+                    }).then(() => {
+                        location.reload();
                     });
                 }
             });

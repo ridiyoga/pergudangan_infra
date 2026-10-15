@@ -48,20 +48,22 @@
                         <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
                     </a>
                 </nav>
-                <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
-                    <a @class([
-                        'nav-link',
-                        'sidebar-link',
-                        'active' => request()->is('menu'),
-                    ]) href="{{ url('menu') }}"
-                        @if (request()->is('menu')) aria-current="page" @endif>
-                        <span class="sidebar-link-icon" aria-hidden="true">
-                            <i class="bi bi-house-door-fill" aria-hidden="true"></i>
-                        </span>
-                        <span>Master Menu</span>
-                        <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
-                    </a>
-                </nav>
+                @foreach ($menu as $mn)
+                    <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
+                        <a @class([
+                            'nav-link',
+                            'sidebar-link',
+                            'active' => request()->is($mn->route),
+                        ]) href="{{ url($mn->route) }}"
+                            @if (request()->is($mn->route)) aria-current="page" @endif>
+                            <span class="sidebar-link-icon" aria-hidden="true">
+                                <i class="{{ $mn->icon }}" aria-hidden="true"></i>
+                            </span>
+                            <span>{{ $mn->nama_menu }}</span>
+                            <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
+                        </a>
+                    </nav>
+                @endforeach
                 {{-- <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
                     <button class="nav-link sidebar-link sidebar-menu-toggle" type="button" aria-expanded="false"
                         aria-controls="menuSubmenu">
