@@ -54,7 +54,7 @@
                             'nav-link',
                             'sidebar-link',
                             'active' => request()->is($mn->route),
-                        ]) href="{{ url($mn->route) }}"
+                        ]) href="{{ route($mn->route) }}"
                             @if (request()->is($mn->route)) aria-current="page" @endif>
                             <span class="sidebar-link-icon" aria-hidden="true">
                                 <i class="{{ $mn->icon }}" aria-hidden="true"></i>

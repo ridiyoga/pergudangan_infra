@@ -41,7 +41,7 @@
                     </div>
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Route</label>
-                        <input type="text" class="form-control" placeholder="Route" id="route_add" name="route">
+                        <input type="text" class="form-control" placeholder="route" id="route_add" name="route">
                     </div>
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Bootstrap Icon</label>
@@ -187,7 +187,10 @@
                     orderable: false,
                     searchable: false
                 },
-            ]
+            ],
+            order: [
+                [1, 'desc']
+            ],
         });
         $(document).on('click', '#btn_create_menu', function(e) {
             e.preventDefault();

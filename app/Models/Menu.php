@@ -19,5 +19,7 @@ class Menu extends Model
         'nama_menu',
         'route',
         'icon',
+        'created_at',
+        'updated_at',
     ];
 }

@@ -130,6 +130,10 @@
         font-family: 'Open Sans', sans-serif;
     }
 
+    label {
+        opacity: 0.55;
+    }
+
     button,
     input,
     select,
@@ -137,13 +141,13 @@
         font-family: inherit;
     }
 
-    #tabel_menu {
+    table {
         border-collapse: separate;
         border-spacing: 0;
         font-size: 0.9rem;
     }
 
-    #tabel_menu thead th {
+    table thead th {
         padding: 0.9rem 1rem;
         border-bottom: 0;
         background-color: var(--bs-light);
@@ -154,7 +158,7 @@
         white-space: nowrap;
     }
 
-    #tabel_menu tbody td {
+    table tbody td {
         padding: 0.85rem 1rem;
         background-color: var(--bs-white);
         border-color: var(--bs-border-color-translucent);
@@ -164,10 +168,10 @@
         transition: background-color 0.15s ease;
     }
 
-    #tabel_menu tbody td:first-child,
-    #tabel_menu thead th:first-child,
-    #tabel_menu tbody td:last-child,
-    #tabel_menu thead th:last-child {
+    table tbody td:first-child,
+    table thead th:first-child,
+    table tbody td:last-child,
+    table thead th:last-child {
         text-align: center;
     }
 </style>
