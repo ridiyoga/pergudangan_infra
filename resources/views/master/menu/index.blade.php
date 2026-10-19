@@ -189,7 +189,7 @@
                 },
             ],
             order: [
-                [1, 'desc']
+                [1, 'asc']
             ],
         });
         $(document).on('click', '#btn_create_menu', function(e) {
@@ -200,6 +200,13 @@
                 type: "POST",
                 data: $('#form_tambah_menu').serialize(),
                 dataType: 'json',
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                },
 
                 success: function(data) {
                     if (data.errors) {
@@ -247,6 +254,13 @@
                 type: "POST",
                 data: $('#form_delete_menu').serialize(),
                 dataType: 'json',
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                },
 
                 success: function(data) {
                     if (data.errors) {
@@ -295,6 +309,13 @@
                 type: "POST",
                 data: $('#form_update_menu').serialize(),
                 dataType: 'json',
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                },
 
                 success: function(data) {
                     if (data.errors) {

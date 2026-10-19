@@ -126,12 +126,12 @@
         }
     }
 
-    body {
+    /* body {
         font-family: 'Open Sans', sans-serif;
-    }
+    } */
 
     label {
-        opacity: 0.55;
+        opacity: 0.75;
     }
 
     button,
@@ -139,6 +139,39 @@
     select,
     textarea {
         font-family: inherit;
+    }
+
+    .form-control::placeholder {
+        opacity: 0.5;
+    }
+
+    .modal .select2-container--default .select2-selection--single {
+        display: flex;
+        align-items: center;
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
+        background-color: var(--bs-body-bg);
+    }
+
+    .modal .select2-container--default .select2-selection--single .select2-selection__rendered {
+        padding-left: 0;
+        padding-right: 1.25rem;
+        color: var(--bs-body-color);
+        line-height: 1.5;
+    }
+
+    .modal .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 50%;
+        right: .5rem;
+        transform: translateY(-50%);
+    }
+
+    .modal .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
     }
 
     table {
