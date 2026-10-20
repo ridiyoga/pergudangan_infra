@@ -152,18 +152,17 @@
     </div>
 </div>
 {{-- Modal Password --}}
-<div class="modal fade" id="modal_password_karyawan" tabindex="-1">
+<div class="modal fade" id="modal_password_user" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Hapus Karyawan</h5>
+                <h5 class="modal-title">Ubah Password</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form_password_karyawan">
+                <form id="form_password_user">
                     @csrf
-                    <input type="hidden" class="form-control" id="id_karyawan_password"
-                        name="id_karyawan_password">
+                    <input type="hidden" class="form-control" id="id_user_password" name="id_user_password">
                     <div class="mb-2">
                         <label for="password_update" class="form-label">Password</label>
 
@@ -185,7 +184,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger" id="btn_password_karyawan">Hapus</button>
+                <button type="button" class="btn btn-primary" id="btn_password_user">Simpan</button>
             </div>
         </div>
     </div>
@@ -283,9 +282,9 @@
         $(document).on('click', '#btn_password_datatable', function(e) {
             var id = $(this).data("id");
 
-            $('#id_karyawan_password').val(id);
+            $('#id_user_password').val(id);
 
-            $('#modal_password_karyawan').modal('show');
+            $('#modal_password_user').modal('show');
         });
         const table = $('#tabel_user').DataTable({
             processing: true,
@@ -358,6 +357,64 @@
                     $('#id_proyek_add').val('').trigger('change');
                     $('#form_tambah_user')[0].reset();
                     $('#modal_user').modal('hide');
+
+                    table.ajax.reload();
+
+                },
+
+                error: function(xhr) {
+                    if (xhr.status === 409) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Perhatian',
+                            text: xhr.responseJSON.message
+                        });
+                    } else {
+                        const errors = xhr.responseJSON?.errors;
+                        if (errors) {
+                            showValidationErrors(errors);
+                            return;
+                        }
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: xhr.responseJSON?.message ||
+                                'Data Gagal Disimpan',
+                            icon: 'error'
+                        })
+                    }
+                }
+            });
+        });
+        $(document).on('click', '#btn_password_user', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ url('/user_password') }}",
+                type: "POST",
+                data: $('#form_password_user').serialize(),
+                dataType: 'json',
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                },
+
+                success: function(data) {
+                    if (data.errors) {
+                        showValidationErrors(data.errors);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: 'Data Berhasil Disimpan',
+                        icon: 'success'
+                    });
+                    $('#form_password_user')[0].reset();
+                    $('#modal_password_user').modal('hide');
 
                     table.ajax.reload();
 
@@ -464,17 +521,26 @@
                 },
 
                 error: function(xhr) {
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        showValidationErrors(errors);
-                        return;
-                    }
+                    if (xhr.status === 409) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Perhatian',
+                            text: xhr.responseJSON.message
+                        });
+                    } else {
+                        const errors = xhr.responseJSON?.errors;
+                        if (errors) {
+                            showValidationErrors(errors);
+                            return;
+                        }
 
-                    Swal.fire({
-                        title: 'Error!',
-                        text: xhr.responseJSON?.message || 'Data Gagal Disimpan',
-                        icon: 'error'
-                    })
+                        Swal.fire({
+                            title: 'Error!',
+                            text: xhr.responseJSON?.message ||
+                                'Data Gagal Disimpan',
+                            icon: 'error'
+                        })
+                    }
                 }
             });
         });

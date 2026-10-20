@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MasterAreaController;
 use App\Http\Controllers\MasterJabatanController;
 use App\Http\Controllers\MasterMenuController;
@@ -54,6 +55,12 @@ Route::post('/karyawan_update', [KaryawanController::class, 'update'])->name('ka
 // Master User
 Route::get('/user', [MasterUserController::class, 'index'])->name('user');
 Route::post('/user_create', [MasterUserController::class, 'create'])->name('user_create');
+Route::post('/user_password', [MasterUserController::class, 'password'])->name('user_password');
 Route::get('/user_dt', [MasterUserController::class, 'user_dt'])->name('user_dt');
 Route::post('/user_delete', [MasterUserController::class, 'delete'])->name('user_delete');
 Route::post('/user_update', [MasterUserController::class, 'update'])->name('user_update');
+
+
+// Master User
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::get('/proses_login', [LoginController::class, 'proses_login'])->name('proses_login');

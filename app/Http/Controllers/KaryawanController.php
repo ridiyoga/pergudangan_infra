@@ -177,7 +177,6 @@ class KaryawanController extends Controller
             $area = Area::where('id', $request->id_area)->first();
 
             Karyawan::where('id', $request->id_karyawan_update)->update([
-                'id' => Uuid::uuid4(),
                 'nama_karyawan' => $request->nama_karyawan,
                 'no_ktp' => $request->no_ktp,
                 'no_wa' => $request->no_wa,

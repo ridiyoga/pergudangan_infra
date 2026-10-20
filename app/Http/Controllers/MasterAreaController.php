@@ -117,7 +117,6 @@ class MasterAreaController extends Controller
             }
 
             Area::where('id', $request->id_area_update)->update([
-                'id' => Uuid::uuid4(),
                 'nama_area' => $request->nama_area,
                 'updated_at' => now(),
             ]);

@@ -123,7 +123,6 @@ class MasterProyekController extends Controller
             }
 
             Proyek::where('id', $request->id_proyek_update)->update([
-                'id' => Uuid::uuid4(),
                 'nama_proyek' => $request->nama_proyek,
                 'akronim' => $request->akronim,
                 'updated_at' => now(),

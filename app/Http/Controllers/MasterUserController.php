@@ -66,22 +66,30 @@ class MasterUserController extends Controller
 
             $karyawan = Karyawan::where('id', $request->id_karyawan)->first();
             $proyek = Proyek::where('id', $request->id_proyek)->first();
+            $user_unique = User::where('username', $request->username)->count();
 
-            User::create([
-                'id' => Uuid::uuid4()->toString(),
-                'id_karyawan' => $request->id_karyawan,
-                'nama_karyawan' => $karyawan->nama_karyawan,
-                'username' => $request->username,
-                'password' => Hash::make($request->password),
-                'id_proyek' => $request->id_proyek,
-                'nama_proyek' => $proyek->nama_proyek,
-                'created_at' => now(),
-            ]);
+            if ($user_unique == 0) {
+                User::create([
+                    'id' => Uuid::uuid4()->toString(),
+                    'id_karyawan' => $request->id_karyawan,
+                    'nama_karyawan' => $karyawan->nama_karyawan,
+                    'username' => $request->username,
+                    'password' => Hash::make($request->password),
+                    'id_proyek' => $request->id_proyek,
+                    'nama_proyek' => $proyek->nama_proyek,
+                    'created_at' => now(),
+                ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'User berhasil disimpan',
-            ], 201);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User berhasil disimpan',
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Username sudah digunakan',
+                ], 409);
+            }
         } catch (\Exception $e) {
 
             return $e->getMessage();
@@ -172,14 +180,70 @@ class MasterUserController extends Controller
             }
             $karyawan = Karyawan::where('id', $request->id_karyawan)->first();
             $proyek = Proyek::where('id', $request->id_proyek)->first();
+            $user_unique = User::where('username', $request->username)
+                ->where('id', '!=', $request->id_user_update)
+                ->exists();
 
-            User::where('id', $request->id_user_update)->update([
-                'id' => Uuid::uuid4(),
-                'id_karyawan' => $request->id_karyawan,
-                'nama_karyawan' => $karyawan->nama_karyawan,
-                'username' => $request->username,
-                'id_proyek' => $request->id_proyek,
-                'nama_proyek' => $proyek->nama_proyek,
+            if ($user_unique) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Username sudah digunakan',
+                ], 409);
+            } else {
+                User::where('id', $request->id_user_update)->update([
+                    'id_karyawan' => $request->id_karyawan,
+                    'nama_karyawan' => $karyawan->nama_karyawan,
+                    'username' => $request->username,
+                    'id_proyek' => $request->id_proyek,
+                    'nama_proyek' => $proyek->nama_proyek,
+                    'updated_at' => now(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User berhasil diperbarui',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+    public function password(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $rules = [
+                'id_user_password' => 'required',
+                'password' => [
+                    'required',
+                    'min:8',
+                    'regex:/[A-Z]/',
+                    'regex:/[a-z]/',
+                    'regex:/[0-9]/',
+                ],
+                'password_confirm' => 'required|same:password',
+
+            ];
+            $messages = [
+                'id_user_password.required' => 'Terjadi kesalahan',
+                'password.required' => 'Password wajib diisi',
+                'password.min' => 'Password minimal 8 karakter',
+                'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka',
+
+                'password_confirm.required' => 'Konfirmasi Password wajib diisi',
+                'password_confirm.same' => 'Konfirmasi Password tidak sama dengan Password',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 400,
+                    'errors' => $validator->errors(),
+                ]);
+            }
+
+            User::where('id', $request->id_user_password)->update([
+                'password' => Hash::make($request->password),
                 'updated_at' => now(),
             ]);
 

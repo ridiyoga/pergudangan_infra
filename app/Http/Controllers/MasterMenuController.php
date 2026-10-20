@@ -128,7 +128,6 @@ class MasterMenuController extends Controller
             }
 
             Menu::where('id', $request->id_menu_update)->update([
-                'id' => Uuid::uuid4(),
                 'nama_menu' => $request->nama_menu,
                 'route' => $request->route,
                 'icon' => $request->icon,

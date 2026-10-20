@@ -117,7 +117,6 @@ class MasterJabatanController extends Controller
             }
 
             Jabatan::where('id', $request->id_jabatan_update)->update([
-                'id' => Uuid::uuid4(),
                 'nama_jabatan' => $request->nama_jabatan,
                 'updated_at' => now(),
             ]);
