@@ -10,10 +10,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterMenuController extends Controller
 {
-    public function index()
+    public function index($id)
     {
         $menu = Menu::orderBy('nama_menu')->get();
-        return view('master/menu/index', compact('menu'));
+        $menu_id = Menu::where('id', $id)->first();
+        return view('master/menu/index', compact('menu', 'menu_id'));
     }
     public function create(Request $request)
     {

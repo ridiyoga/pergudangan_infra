@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
+{
+    protected $table = 'master_user';
+
+    protected $primaryKey = 'id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    protected $hidden = [
+        'password',
+    ];
+
+    protected $fillable = [
+        'id',
+        'id_karyawan',
+        'nama_karyawan',
+        'username',
+        'password',
+        'is_active',
+        'id_proyek',
+        'nama_proyek',
+        'created_at',
+        'updated_at',
+    ];
+}

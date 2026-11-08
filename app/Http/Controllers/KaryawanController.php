@@ -14,14 +14,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KaryawanController extends Controller
 {
-    public function index()
+    public function index($id)
     {
         $menu = Menu::orderBy('nama_menu')->get();
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $area = Area::orderBy('nama_area')->get();
+        $menu_id = Menu::where('id', $id)->first();
         return view('master/karyawan/index', compact(
             'menu',
             'jabatan',
+            'menu_id',
             'area'
         ));
     }

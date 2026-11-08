@@ -28,13 +28,23 @@
                             <p class="text-muted small">Silakan masuk ke akun Anda</p>
                         </div>
 
+                        @if (session('success'))
+                            <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger" role="alert">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
+
                         <!-- Form -->
-                        <form action="{{ route('login.process') }}" method="POST">
+                        <form action="{{ route('proses_login') }}" method="POST">
                             @csrf
-                            <!-- Input Email -->
+                            <!-- Input Username -->
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="username" name="username"
-                                    placeholder="Username" required>
+                                    placeholder="Username" value="{{ old('username') }}" required autofocus>
                                 <label for="username">Username</label>
                             </div>
 

@@ -2,61 +2,100 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Ramsey\Uuid\Uuid;
+
 
 class LoginController extends Controller
 {
-    public function index()
+    public function index($id)
     {
-        // dd($proyek);
-        return view('login');
-    }
-    public function proses_login(Request $request)
-    {
-        dd($request->all());
-        // Validasi input
-        $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
-        // Cek autentikasi (menggunakan Auth bawaan Laravel)
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            // Mencegah Session Fixation Attack
-            $request->session()->regenerate();
-
-            // Mengambil data user yang berhasil login
-            $user = Auth::user();
-
-            // Menyimpan data custom ke Session (Username, Email, Role, dll)
-            session([
-                'user_id'   => $user->id,
-                'username'  => $user->name,
-                'email'     => $user->email,
-                'role'      => $user->role ?? 'user', // Opsional jika ada kolom role
-                'login_time' => now()->format('Y-m-d H:i:s')
-            ]);
-
-            // Redirect ke halaman dashboard
-            return redirect()->intended('/dashboard')->with('success', 'Selamat datang kembali!');
+        if (Auth::check()) {
+            return redirect()->route('home');
         }
 
-        // Jika login gagal
-        return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
-        ])->onlyInput('email');
+        return view('login');
     }
 
-    // 3. Memproses Logout & Menghapus Session
+    public function proses_login(Request $request)
+    {
+        $credentials = $request->validate([
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+            // dd($user);
+            $request->session()->put([
+                'user_id' => $user->getAuthIdentifier(),
+                'username' => $user->username,
+                'login_time' => now()->toDateTimeString(),
+            ]);
+            Log::create([
+                'id' => Uuid::uuid4(),
+                'id_karyawan' => null,
+                'nama_karyawan' => $request->username,
+                'aksi' => 'auth',
+                'deskripsi' => 'Login',
+                'id_menu' => null,
+                'nama_menu' => 'Login',
+                'id_tabel_baru' => null,
+                'nama_tabel' => 'master_user',
+                'id_tabel_lama' => null,
+                'keterangan' => 'success',
+            ]);
+
+            return redirect()->intended(route('home'))->with('success', 'Selamat datang kembali!');
+        }
+        Log::create([
+            'id' => Uuid::uuid4(),
+            'id_karyawan' => null,
+            'nama_karyawan' => $request->username,
+            'aksi' => 'auth',
+            'deskripsi' => 'Username atau password salah',
+            'id_menu' => null,
+            'nama_menu' => 'Login',
+            'id_tabel_baru' => null,
+            'nama_tabel' => 'master_user',
+            'id_tabel_lama' => null,
+            'keterangan' => 'failed',
+        ]);
+        return back()->withErrors([
+
+            'username' => 'Username atau password yang Anda masukkan salah.',
+        ])->onlyInput('username');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
 
-        // Hapus semua session & buat token CSRF baru
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login')->with('success', 'Anda telah berhasil keluar.');
+        $session_id = session()->getId();
+        dd($session_id);
+
+        Log::create([
+            'id' => Uuid::uuid4(),
+            'id_karyawan' => null,
+            'nama_karyawan' => $request->username,
+            'aksi' => 'auth',
+            'deskripsi' => 'Logout',
+            'id_menu' => null,
+            'nama_menu' => 'Logout',
+            'id_tabel_baru' => null,
+            'nama_tabel' => 'master_user',
+            'id_tabel_lama' => null,
+            'keterangan' => 'success',
+        ]);
+
+        return redirect()->route('login')->with('success', 'Anda telah berhasil keluar.');
     }
 }

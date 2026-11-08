@@ -14,16 +14,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterUserController extends Controller
 {
-    public function index()
+    public function index($id)
     {
         $menu = Menu::orderBy('nama_menu')->get();
         $karyawan = Karyawan::orderBy('nama_karyawan', 'ASC')->get();
         $proyek = Proyek::orderBy('nama_proyek', 'ASC')->get();
+        $menu_id = Menu::where('id', $id)->first();
         // dd($proyek);
         return view('master/user/index', compact(
             'menu',
             'karyawan',
-            'proyek'
+            'proyek',
+            'menu_id'
         ));
     }
     public function create(Request $request)

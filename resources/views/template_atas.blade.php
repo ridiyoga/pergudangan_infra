@@ -21,10 +21,13 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <button class="btn btn-link text-secondary ms-auto p-2" type="button" aria-label="Menu pengguna"
-                title="Menu pengguna">
-                <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
-            </button>
+            <span class="ms-auto me-3">{{ session('username') }}</span>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Keluar
+                </button>
+            </form>
         </div>
     </nav>
 
@@ -55,9 +58,9 @@
                         <a @class([
                             'nav-link',
                             'sidebar-link',
-                            'active' => request()->is($mn->route),
-                        ]) href="{{ route($mn->route) }}"
-                            @if (request()->is($mn->route)) aria-current="page" @endif>
+                            'active' => request()->is($mn->route) || request()->is($mn->route . '/*'),
+                        ]) href="{{ route($mn->route, ['menu_id' => $mn->id]) }}"
+                            @if (request()->is($mn->route) || request()->is($mn->route . '/*')) aria-current="page" @endif>
                             <span class="sidebar-link-icon" aria-hidden="true">
                                 <i class="{{ $mn->icon }}" aria-hidden="true"></i>
                             </span>

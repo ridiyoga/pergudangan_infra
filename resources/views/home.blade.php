@@ -1,4 +1,5 @@
 @include('template_atas')
+@include('template_css')
 @include('sweetalert::alert')
 <main class="flex-grow-1 p-4">
     <h1 class="h3 mb-0">Dashboard</h1>
