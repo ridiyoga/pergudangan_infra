@@ -10,7 +10,7 @@ use Ramsey\Uuid\Uuid;
 
 class LoginController extends Controller
 {
-    public function index($id)
+    public function index()
     {
         if (Auth::check()) {
             return redirect()->route('home');

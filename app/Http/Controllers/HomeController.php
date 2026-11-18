@@ -10,7 +10,11 @@ class HomeController extends Controller
     //
     public function index()
     {
-        $menu = Menu::orderBy('nama_menu')->get();
-        return view('home', compact('menu'));
+        $parent = Menu::orderBy('nama_menu')
+            ->where('parent', 1)
+            ->with('Children')
+            ->orderBy('nama_menu')
+            ->get();
+        return view('home', compact('parent'));
     }
 }

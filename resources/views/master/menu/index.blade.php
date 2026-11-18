@@ -13,6 +13,7 @@
                         <th>NO.</th>
                         <th>NAMA MENU</th>
                         <th>ROUTE</th>
+                        <th>PARENT</th>
                         <th>ICON</th>
                         <th>AKSI</th>
                     </tr>
@@ -40,8 +41,27 @@
                             name="nama_menu">
                     </div>
                     <div class="mb-2">
-                        <label for="nama_menu" class="form-label">Route</label>
-                        <input type="text" class="form-control" placeholder="route" id="route_add" name="route">
+                        <label for="parent_add" class="form-label">Parent?</label>
+                        <select class="form-select" id="parent_add" name="parent">
+                            <option value="1">Ya</option>
+                            <option value="2">Tidak</option>
+                        </select>
+                    </div>
+                    <div id="route_add_group">
+                        <div class="mb-2">
+                            <label for="id_parent_add" class="form-label">Parent</label>
+                            <select class="form-select" id="id_parent_add" name="id_parent">
+                                <option value=""></option>
+                                @foreach ($parent as $pt)
+                                    <option value="{{ $pt->id }}">{{ $pt->nama_menu }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-2" id="">
+                            <label for="route_add" class="form-label">Route</label>
+                            <input type="text" class="form-control" placeholder="route" id="route_add"
+                                name="route">
+                        </div>
                     </div>
                     <div class="mb-2">
                         <label for="nama_menu" class="form-label">Bootstrap Icon</label>
@@ -82,7 +102,7 @@
     </div>
 </div>
 {{-- Modal Update --}}
-<div class="modal fade" id="modal_update_menu" tabindex="-1">
+{{-- <div class="modal fade" id="modal_update_menu" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -113,7 +133,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- DataTables CSS -->
@@ -123,6 +143,13 @@
 <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
 <script>
     $(document).ready(function() {
+        function toggleRouteAdd() {
+            $('#route_add_group').toggle($('#parent_add').val() === '2');
+        }
+
+        $('#parent_add').on('change', toggleRouteAdd);
+        toggleRouteAdd();
+
         function showValidationErrors(errors) {
             Swal.fire({
                 title: 'Validasi gagal',
@@ -141,17 +168,17 @@
             $('#id_menu_delete').val(id);
             $('#modal_delete_menu').modal('show');
         });
-        $(document).on('click', '#btn_update_datatable', function(e) {
-            var id = $(this).data("id");
-            var nama_menu = $(this).data("nama_menu");
-            var route = $(this).data("route");
-            var icon = $(this).data("icon");
-            $('#id_menu_update').val(id);
-            $('#nama_menu_update').val(nama_menu);
-            $('#route_update').val(route);
-            $('#icon_update').val(icon);
-            $('#modal_update_menu').modal('show');
-        });
+        // $(document).on('click', '#btn_update_datatable', function(e) {
+        //     var id = $(this).data("id");
+        //     var nama_menu = $(this).data("nama_menu");
+        //     var route = $(this).data("route");
+        //     var icon = $(this).data("icon");
+        //     $('#id_menu_update').val(id);
+        //     $('#nama_menu_update').val(nama_menu);
+        //     $('#route_update').val(route);
+        //     $('#icon_update').val(icon);
+        //     $('#modal_update_menu').modal('show');
+        // });
         const table = $('#tabel_menu').DataTable({
             processing: true,
             responsive: true,
@@ -176,6 +203,10 @@
                 {
                     data: "route",
                     name: "route"
+                },
+                {
+                    data: "parent",
+                    name: "parent"
                 },
                 {
                     data: "icon",

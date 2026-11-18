@@ -16,14 +16,15 @@ class KaryawanController extends Controller
 {
     public function index($id)
     {
-        $menu = Menu::orderBy('nama_menu')->get();
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $area = Area::orderBy('nama_area')->get();
-        $menu_id = Menu::where('id', $id)->first();
+        $parent = Menu::orderBy('nama_menu')
+            ->where('parent', 1)
+            ->with('Children')
+            ->orderBy('nama_menu')
+            ->get();
         return view('master/karyawan/index', compact(
-            'menu',
             'jabatan',
-            'menu_id',
             'area'
         ));
     }

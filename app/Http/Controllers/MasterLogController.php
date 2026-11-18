@@ -10,9 +10,12 @@ class MasterLogController extends Controller
 {
     public function index($id)
     {
-        $menu = Menu::orderBy('nama_menu')->get();
-        $menu_id = Menu::where('id', $id)->first();
-        return view('log', compact('menu', 'menu_id'));
+        $parent = Menu::orderBy('nama_menu')
+            ->where('parent', 1)
+            ->with('Children')
+            ->orderBy('nama_menu')
+            ->get();
+        return view('log', compact('parent'));
     }
     public function log_dt()
     {

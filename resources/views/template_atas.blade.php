@@ -53,7 +53,7 @@
                         <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
                     </a>
                 </nav>
-                @foreach ($menu as $mn)
+                {{-- @foreach ($menu as $mn)
                     <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
                         <a @class([
                             'nav-link',
@@ -68,22 +68,31 @@
                             <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
                         </a>
                     </nav>
+                @endforeach --}}
+                @foreach ($parent as $pr)
+                    <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
+                        <button class="nav-link sidebar-link sidebar-menu-toggle" type="button" aria-expanded="false"
+                            aria-controls="menuSubmenu-{{ $loop->index }}">
+                            <span class="sidebar-link-icon" aria-hidden="true">
+                                <i class="{{ $pr->icon }}" aria-hidden="true"></i>
+                            </span>
+                            <span>{{ $pr->nama_menu }}</span>
+                            <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
+                        </button>
+                        <div class="sidebar-submenu" id="menuSubmenu-{{ $loop->index }}" style="display: none">
+                            @foreach ($pr->Children as $mn)
+                                <a @class([
+                                    'nav-link',
+                                    'sidebar-link',
+                                    'active' => request()->is($mn->route) || request()->is($mn->route . '/*'),
+                                ]) href="{{ route($mn->route, ['menu_id' => $mn->id]) }}">
+                                    <i class="{{ $mn->icon }}" aria-hidden="true"></i>
+                                    <span>{{ $mn->nama_menu }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </nav>
                 @endforeach
-                {{-- <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
-                    <button class="nav-link sidebar-link sidebar-menu-toggle" type="button" aria-expanded="false"
-                        aria-controls="menuSubmenu">
-                        <span class="sidebar-link-icon" aria-hidden="true">
-                            <i class="bi bi-folder2-open" aria-hidden="true"></i>
-                        </span>
-                        <span>Menu</span>
-                        <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
-                    </button>
-                    <div class="sidebar-submenu" id="menuSubmenu" style="display: none">
-                        <a class="nav-link sidebar-link sidebar-submenu-link" href="#">
-                            <i class="bi bi-dot" aria-hidden="true"></i>
-                            <span>Submenu</span>
-                        </a>
-                    </div>
-                </nav> --}}
+
             </div>
         </aside>

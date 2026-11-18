@@ -13,9 +13,12 @@ class MasterAreaController extends Controller
 {
     public function index($id)
     {
-        $menu = Menu::orderBy('nama_menu')->get();
-        $menu_id = Menu::where('id', $id)->first();
-        return view('master/area/index', compact('menu', 'menu_id'));
+        $parent = Menu::orderBy('nama_menu')
+            ->where('parent', 1)
+            ->with('Children')
+            ->orderBy('nama_menu')
+            ->get();
+        return view('master/area/index', compact('parent'));
     }
     public function create(Request $request)
     {

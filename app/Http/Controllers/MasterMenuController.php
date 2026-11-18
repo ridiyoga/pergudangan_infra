@@ -12,22 +12,27 @@ class MasterMenuController extends Controller
 {
     public function index($id)
     {
-        $menu = Menu::orderBy('nama_menu')->get();
-        $menu_id = Menu::where('id', $id)->first();
-        return view('master/menu/index', compact('menu', 'menu_id'));
+        $parent = Menu::orderBy('nama_menu')
+            ->where('parent', 1)
+            ->with('Children')
+            ->orderBy('nama_menu')
+            ->get();
+        // dd($parent);
+        return view('master/menu/index', compact(
+            'parent',
+        ));
     }
     public function create(Request $request)
     {
+        // dd($request->all());
         try {
             $rules = [
                 'nama_menu' => 'required',
-                'route' => 'required',
                 'icon' => 'required',
 
             ];
             $messages = [
                 'nama_menu.required' => 'Nama Menu wajib diisi',
-                'route.required' => 'Route wajib diisi',
                 'icon.required' => 'Icon wajib diisi',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -41,6 +46,9 @@ class MasterMenuController extends Controller
             Menu::create([
                 'id' => Uuid::uuid4(),
                 'nama_menu' => $request->nama_menu,
+                'parent' => $request->parent,
+                'id_parent' => $request->id_parent,
+                'nama_parent' => $request->nama_parent,
                 'route' => $request->route,
                 'icon' => $request->icon,
                 'created_at' => now(),
@@ -61,17 +69,28 @@ class MasterMenuController extends Controller
 
         return DataTables::of($data)
             ->addColumn('aksi', function ($row) {
-                $action = '
-                            <button class="btn btn-warning m-1" id="btn_update_datatable"
-                                data-id="' . $row->id . '"
-                                data-nama_menu="' . $row->nama_menu . '"
-                                data-route="' . $row->route . '"
-                                data-icon="' . $row->icon . '">
-                                <i class="bi bi-pencil"></i></button>';
-                $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
+                // $action = '
+                //             <button class="btn btn-warning m-1" id="btn_update_datatable"
+                //                 data-id="' . $row->id . '"
+                //                 data-nama_menu="' . $row->nama_menu . '"
+                //                 data-route="' . $row->route . '"
+                //                 data-icon="' . $row->icon . '">
+                //                 <i class="bi bi-pencil"></i></button>';
+                $btn = '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
                 return $btn;
             })
-            ->rawColumns(['aksi'])
+            ->addColumn('parent', function ($row) {
+                if ($row->parent == null) {
+                    $parent = 'TIDAK';
+                } else {
+                    $parent = 'YA';
+                }
+                return $parent;
+            })
+            ->rawColumns([
+                'aksi',
+                'parent'
+            ])
             ->make(true);
     }
     public function delete(Request $request)
@@ -105,43 +124,44 @@ class MasterMenuController extends Controller
             return $e->getMessage();
         }
     }
-    public function update(Request $request)
-    {
-        // dd($request->all());
-        try {
-            $rules = [
-                'nama_menu' => 'required',
-                'route' => 'required',
-                'icon' => 'required',
+    // public function update(Request $request)
+    // {
+    //     // dd($request->all());
+    //     try {
+    //         $rules = [
+    //             'nama_menu' => 'required',
+    //             'icon' => 'required',
 
-            ];
-            $messages = [
-                'nama_menu.required' => 'Nama Menu wajib diisi',
-                'route.required' => 'Route wajib diisi',
-                'icon.required' => 'Icon wajib diisi',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return response()->json([
-                    'code' => 400,
-                    'errors' => $validator->errors(),
-                ]);
-            }
+    //         ];
+    //         $messages = [
+    //             'nama_menu.required' => 'Nama Menu wajib diisi',
+    //             'icon.required' => 'Icon wajib diisi',
+    //         ];
+    //         $validator = Validator::make($request->all(), $rules, $messages);
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'code' => 400,
+    //                 'errors' => $validator->errors(),
+    //             ]);
+    //         }
 
-            Menu::where('id', $request->id_menu_update)->update([
-                'nama_menu' => $request->nama_menu,
-                'route' => $request->route,
-                'icon' => $request->icon,
-                'created_at' => now(),
-            ]);
+    //         Menu::where('id', $request->id_menu_update)->update([
+    //             'nama_menu' => $request->nama_menu,
+    //             'route' => $request->route,
+    //             'parent' => $request->parent,
+    //             'id_parent' => $request->id_parent,
+    //             'nama_parent' => $request->nama_parent,
+    //             'icon' => $request->icon,
+    //             'created_at' => now(),
+    //         ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Menu berhasil disimpan',
-            ], 201);
-        } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Menu berhasil disimpan',
+    //         ], 201);
+    //     } catch (\Exception $e) {
 
-            return $e->getMessage();
-        }
-    }
+    //         return $e->getMessage();
+    //     }
+    // }
 }
