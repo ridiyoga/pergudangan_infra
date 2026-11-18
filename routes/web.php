@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/hak_akses/{menu_id}', [MasterHakAksesController::class, 'index'])->name('hak_akses');
     Route::post('/hak_akses_create', [MasterHakAksesController::class, 'create'])->name('hak_akses_create');
     Route::get('/hak_akses_dt', [MasterHakAksesController::class, 'hak_akses_dt'])->name('hak_akses_dt');
+    Route::get('/hak_akses_menu_dt', [MasterHakAksesController::class, 'hak_akses_menu_dt'])->name('hak_akses_menu_dt');
     Route::post('/hak_akses_delete', [MasterHakAksesController::class, 'delete'])->name('hak_akses_delete');
     Route::post('/hak_akses_update', [MasterHakAksesController::class, 'update'])->name('hak_akses_update');
 

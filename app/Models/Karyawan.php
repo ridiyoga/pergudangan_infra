@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Karyawan extends Model
 {
@@ -28,4 +29,8 @@ class Karyawan extends Model
         'created_at',
         'updated_at',
     ];
+    public function HakAkses(): HasOne
+    {
+        return $this->hasOne(Jabatan::class, 'id_jabatan', 'id')->orderBy('nama_menu');
+    }
 }

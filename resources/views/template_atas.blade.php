@@ -70,17 +70,18 @@
                     </nav>
                 @endforeach --}}
                 @foreach ($parent as $pr)
+                    @if ($pr->Menu)
                     <nav class="nav flex-column gap-1 mb-2" aria-label="Menu utama">
                         <button class="nav-link sidebar-link sidebar-menu-toggle" type="button" aria-expanded="false"
                             aria-controls="menuSubmenu-{{ $loop->index }}">
                             <span class="sidebar-link-icon" aria-hidden="true">
-                                <i class="{{ $pr->icon }}" aria-hidden="true"></i>
+                                <i class="{{ $pr->Menu->icon }}" aria-hidden="true"></i>
                             </span>
                             <span>{{ $pr->nama_menu }}</span>
                             <i class="bi bi-chevron-right sidebar-link-arrow" aria-hidden="true"></i>
                         </button>
                         <div class="sidebar-submenu" id="menuSubmenu-{{ $loop->index }}" style="display: none">
-                            @foreach ($pr->Children as $mn)
+                            @foreach ($pr->Menu->Children as $mn)
                                 <a @class([
                                     'nav-link',
                                     'sidebar-link',
@@ -92,6 +93,7 @@
                             @endforeach
                         </div>
                     </nav>
+                    @endif
                 @endforeach
 
             </div>

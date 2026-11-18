@@ -10,6 +10,7 @@
                     <tr>
                         <th>NO.</th>
                         <th>NAMA JABATAN</th>
+                        <th>MENU</th>
                         <th>AKSI</th>
                     </tr>
                 </thead>
@@ -28,18 +29,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form_update_jabatan">
+                <form id="form_update_hak_akses">
                     @csrf
                     <div class="mb-2">
                         <label for="nama_jabatan" class="form-label">Nama Jabatan</label>
-                        <input type="hidden" class="form-control" id="id_jabatan_update" name="id_jabatan_update">
-                        <input type="text" class="form-control" id="nama_jabatan_update" name="nama_jabatan">
+                        <input type="hidden" class="form-control" id="id_jabatan_update" name="id_jabatan">
+                        <input type="text" class="form-control" id="nama_jabatan_update" name="nama_jabatan"
+                            readonly>
+                    </div>
+                    <div class="mb-2 p-3 table-responsive bg-white">
+                        <table id="tabel_menu" class="table" style="font-size: small;">
+                            <thead>
+                                <tr>
+                                    <th>NO.</th>
+                                    <th>NAMA MENU</th>
+                                    <th>CHECK</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="btn_update_jabatan">Simpan</button>
+                <button type="button" class="btn btn-primary" id="btn_update_akses">Simpan</button>
             </div>
         </div>
     </div>
@@ -64,11 +79,52 @@
             })
         }
 
+        const table_menu = $('#tabel_menu').DataTable({
+            processing: true,
+            responsive: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('/hak_akses_menu_dt') }}",
+                type: "GET",
+                data: function(d) {
+                    d.id_jabatan = $('#id_jabatan_update').val();
+                }
+            },
+            columns: [{
+                    data: "id",
+                    name: "id",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "nama_menu",
+                    name: "nama_menu"
+                },
+                {
+                    data: 'check',
+                    name: 'check',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [1, 'asc']
+            ],
+        });
+
+        $('#modal_update_jabatan').on('shown.bs.modal', function() {
+            table_menu.columns.adjust();
+        });
+
         $(document).on('click', '#btn_update_datatable', function(e) {
             var id = $(this).data("id");
             var nama_jabatan = $(this).data("nama_jabatan");
             $('#id_jabatan_update').val(id);
             $('#nama_jabatan_update').val(nama_jabatan);
+            table_menu.ajax.reload();
             $('#modal_update_jabatan').modal('show');
         });
         const table = $('#tabel_jabatan').DataTable({
@@ -93,6 +149,10 @@
                     name: "nama_jabatan"
                 },
                 {
+                    data: "menu",
+                    name: "menu"
+                },
+                {
                     data: "aksi",
                     name: "aksi",
                     orderable: false,
@@ -103,14 +163,14 @@
                 [1, 'asc']
             ],
         });
-        $(document).on('click', '#btn_update_jabatan', function(e) {
+        $(document).on('click', '#btn_update_akses', function(e) {
             e.preventDefault();
             // console.log('asoy');
 
             $.ajax({
-                url: "{{ url('/jabatan_update') }}",
+                url: "{{ url('/hak_akses_create') }}",
                 type: "POST",
-                data: $('#form_update_jabatan').serialize(),
+                data: $('#form_update_hak_akses').serialize(),
                 dataType: 'json',
                 beforeSend: function() {
                     Swal.fire({
@@ -132,7 +192,7 @@
                         icon: 'success'
                     });
 
-                    $('#form_update_jabatan')[0].reset();
+                    $('#form_update_hak_akses')[0].reset();
                     $('#modal_update_jabatan').modal('hide');
 
                     table.ajax.reload();

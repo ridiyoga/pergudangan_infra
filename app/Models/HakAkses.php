@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Jabatan extends Model
+class HakAkses extends Model
 {
     protected $table = 'master_hak_akses';
 
@@ -23,4 +24,8 @@ class Jabatan extends Model
         'created_at',
         'updated_at',
     ];
+    public function Menu(): BelongsTo
+    {
+        return $this->belongsTo(Menu::class, 'id_menu', 'id');
+    }
 }

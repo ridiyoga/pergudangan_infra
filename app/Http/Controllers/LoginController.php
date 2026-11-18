@@ -80,7 +80,7 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         $session_id = session()->getId();
-        dd($session_id);
+        // dd($session_id);
 
         Log::create([
             'id' => Uuid::uuid4(),

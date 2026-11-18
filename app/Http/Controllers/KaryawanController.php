@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\HakAkses;
 use App\Models\Jabatan;
 use App\Models\Menu;
-use App\Models\karyawan;
+use App\Models\Karyawan;
 use App\Models\Proyek;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,13 +20,17 @@ class KaryawanController extends Controller
     {
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $area = Area::orderBy('nama_area')->get();
-        $parent = Menu::orderBy('nama_menu')
-            ->where('parent', 1)
-            ->with('Children')
+
+        $user = Auth::user();
+        $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+        $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
+            ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
+        // dd($parent);
         return view('master/karyawan/index', compact(
             'jabatan',
+            'parent',
             'area'
         ));
     }
