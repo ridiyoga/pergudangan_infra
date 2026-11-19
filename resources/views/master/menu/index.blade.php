@@ -52,7 +52,7 @@
                             <label for="id_parent_add" class="form-label">Parent</label>
                             <select class="form-select" id="id_parent_add" name="id_parent">
                                 <option value=""></option>
-                                @foreach ($parent as $pt)
+                                @foreach ($parent_menu as $pt)
                                     <option value="{{ $pt->id }}">{{ $pt->nama_menu }}</option>
                                 @endforeach
                             </select>

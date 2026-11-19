@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LoginController;
@@ -70,6 +71,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/user_dt', [MasterUserController::class, 'user_dt'])->name('user_dt');
     Route::post('/user_delete', [MasterUserController::class, 'delete'])->name('user_delete');
     Route::post('/user_update', [MasterUserController::class, 'update'])->name('user_update');
+
+    // Master Barang
+    Route::get('/barang/{menu_id}', [BarangController::class, 'index'])->name('barang');
+    Route::post('/barang_create', [BarangController::class, 'create'])->name('barang_create');
+    Route::get('/barang_dt', [BarangController::class, 'barang_dt'])->name('barang_dt');
+    Route::post('/barang_delete', [BarangController::class, 'delete'])->name('barang_delete');
+    Route::post('/barang_update', [BarangController::class, 'update'])->name('barang_update');
 
     // Master User
     Route::get('/log/{menu_id}', [MasterLogController::class, 'index'])->name('log');

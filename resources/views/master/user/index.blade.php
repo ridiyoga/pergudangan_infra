@@ -271,6 +271,7 @@
             var id_karyawan = $(this).data("id_karyawan");
             var id_proyek = $(this).data("id_proyek");
             var username = $(this).data("username");
+            // console.log(id);
 
             $('#id_user_update').val(id);
             $('#id_karyawan_update').val(id_karyawan).trigger('change');

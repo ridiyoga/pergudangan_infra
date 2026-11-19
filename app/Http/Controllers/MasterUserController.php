@@ -191,6 +191,8 @@ class MasterUserController extends Controller
                 ->where('id', '!=', $request->id_user_update)
                 ->exists();
 
+            // dd($request->all());
+
             if ($user_unique) {
                 return response()->json([
                     'success' => false,
@@ -201,7 +203,7 @@ class MasterUserController extends Controller
                     'id_karyawan' => $request->id_karyawan,
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'username' => $request->username,
-                    'id_proyek' => $request->id_proyek,
+                    'id_proyek' => $proyek->id,
                     'nama_proyek' => $proyek->nama_proyek,
                     'updated_at' => now(),
                 ]);

@@ -14,6 +14,7 @@
                         <th>DESKRIPSI</th>
                         <th>NAMA MENU</th>
                         <th>NAMA TABEL</th>
+                        <th>ID TABEL</th>
                         <th>KETERANGAN</th>
                         <th>DIBUAT PADA</th>
                     </tr>
@@ -79,6 +80,10 @@
                 {
                     data: "nama_tabel",
                     name: "nama_tabel"
+                },
+                {
+                    data: "id_tabel_baru",
+                    name: "id_tabel_baru"
                 },
                 {
                     data: "keterangan",

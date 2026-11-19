@@ -22,8 +22,10 @@ class MasterMenuController extends Controller
             ->orderBy('nama_menu')
             ->get();
         // dd($parent);
+        $parent_menu = Menu::where('parent', 1)->get();
         return view('master/menu/index', compact(
             'parent',
+            'parent_menu',
         ));
     }
     public function create(Request $request)
