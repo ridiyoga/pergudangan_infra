@@ -13,6 +13,7 @@
                         <th>NO.</th>
                         <th>NAMA BARANG</th>
                         <th>KODE BARANG</th>
+                        <th>KATEGORI</th>
                         <th>SATUAN</th>
                         <th>PENGINPUT / PENGEDIT</th>
                         <th>AKSI</th>
@@ -39,6 +40,15 @@
                         <label for="nama_barang" class="form-label">Nama Barang</label>
                         <input type="text" class="form-control" placeholder="Nama Barang" id="nama_barang_add"
                             name="nama_barang">
+                    </div>
+                    <div class="mb-2">
+                        <label for="id_kategori_add" class="form-label">Kategori</label>
+                        <select class="form-select" id="id_kategori_add" name="id_kategori">
+                            <option value=""></option>
+                            @foreach ($kategori as $kk)
+                                <option value="{{ $kk->id }}">{{ $kk->nama_kategori }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-2">
                         <label for="kode_barang" class="form-label">Kode Barang</label>
@@ -105,6 +115,15 @@
                             name="kode_barang">
                     </div>
                     <div class="mb-2">
+                        <label for="id_kategori_add" class="form-label">Kategori</label>
+                        <select class="form-select" id="id_kategori_update" name="id_kategori">
+                            <option value=""></option>
+                            @foreach ($kategori as $kk)
+                                <option value="{{ $kk->id }}">{{ $kk->nama_kategori }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
                         <label for="satuan" class="form-label">Satuan</label>
                         <input type="text" class="form-control" id="satuan_update" name="satuan">
                     </div>
@@ -140,6 +159,18 @@
         $(document).on('click', '#btn_tambah_barang', function(e) {
             $('#modal_barang').modal('show');
         });
+        $('#id_kategori_add').select2({
+            dropdownParent: $('#modal_barang'),
+            width: '100%',
+            placeholder: 'Pilih Kategori',
+            allowClear: true
+        });
+        $('#id_kategori_update').select2({
+            dropdownParent: $('#modal_update_barang'),
+            width: '100%',
+            placeholder: 'Pilih Kategori',
+            allowClear: true
+        });
         // $(document).on('click', '#btn_delete_datatable', function(e) {
         //     var id = $(this).data("id");
         //     $('#id_barang_delete').val(id);
@@ -150,9 +181,11 @@
             var nama_barang = $(this).data("nama_barang");
             var kode_barang = $(this).data("kode_barang");
             var satuan = $(this).data("satuan");
+            var id_kategori = $(this).data("id_kategori");
             $('#id_barang_update').val(id);
             $('#nama_barang_update').val(nama_barang);
             $('#kode_barang_update').val(kode_barang);
+            $('#id_kategori_update').val(id_kategori || '').trigger('change');
             $('#satuan_update').val(satuan);
             $('#modal_update_barang').modal('show');
         });
@@ -180,6 +213,10 @@
                 {
                     data: "kode_barang",
                     name: "kode_barang"
+                },
+                {
+                    data: "nama_kategori",
+                    name: "nama_kategori"
                 },
                 {
                     data: "satuan",
@@ -229,6 +266,7 @@
                     });
 
                     $('#form_tambah_barang')[0].reset();
+                    $('#id_kategori_add').val(null).trigger('change');
                     $('#modal_barang').modal('hide');
 
                     table.ajax.reload();

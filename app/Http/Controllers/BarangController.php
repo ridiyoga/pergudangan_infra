@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangKategori;
 use App\Models\Menu;
 use App\Models\HakAkses;
 use App\Models\Karyawan;
@@ -24,7 +25,8 @@ class BarangController extends Controller
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('master/barang/index', compact('parent'));
+        $kategori = BarangKategori::where('id_proyek', $user->id_proyek)->get();
+        return view('master/barang/index', compact('parent', 'kategori'));
     }
     public function create(Request $request)
     {
@@ -49,6 +51,7 @@ class BarangController extends Controller
             $user = Auth::user();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
+            $kategori = BarangKategori::where('id', $request->id_kategori)->first();
             $kode = Uuid::uuid4();
             $barang_unik = Barang::where('nama_barang', $request->nama_barang)
                 ->where('id_proyek', $user->id_proyek)
@@ -101,6 +104,8 @@ class BarangController extends Controller
                 'satuan' => $request->satuan,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
+                'id_kategori' => $kategori->id,
+                'nama_kategori' => $kategori->nama_kategori,
                 'id_proyek' => $proyek->id,
                 'nama_proyek' => $proyek->nama_proyek,
                 'created_at' => now(),
@@ -142,7 +147,8 @@ class BarangController extends Controller
                                 data-id="' . $row->id . '"
                                 data-satuan="' . $row->satuan . '"
                                 data-kode_barang="' . $row->kode_barang . '"
-                                data-nama_barang="' . $row->nama_barang . '">
+                                data-nama_barang="' . $row->nama_barang . '"
+                                data-id_kategori="' . $row->id_kategori . '">
                                  <i class="bi bi-pencil"></i></button>';
                 // $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
                 return $action;
@@ -211,6 +217,7 @@ class BarangController extends Controller
                 ->where('id_proyek', $user->id_proyek)
                 ->where('id', '!=', $request->id_barang_update)
                 ->exists();
+            $kategori = BarangKategori::where('id', $request->id_kategori)->first();
 
             if ($kode_unik) {
                 if ($barang_unik) {
@@ -258,6 +265,8 @@ class BarangController extends Controller
                 'satuan' => $request->satuan,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
+                'id_kategori' => $kategori->id,
+                'nama_kategori' => $kategori->nama_kategori,
                 'updated_at' => now(),
             ]);
             Log::create([
