@@ -22,12 +22,13 @@ class BarangMasukController extends Controller
     public function index($id)
     {
         $user = Auth::user();
+        $menu_id = $id;
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('gudang/barang_masuk/index', compact('parent'));
+        return view('gudang/barang_masuk/index', compact('parent', 'menu_id'));
     }
     public function create(Request $request)
     {
@@ -35,6 +36,7 @@ class BarangMasukController extends Controller
         try {
             $rules = [
                 'no_bapb' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -51,6 +53,7 @@ class BarangMasukController extends Controller
 
 
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $area = Area::where('id', $karyawan->id_area)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
@@ -65,8 +68,8 @@ class BarangMasukController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'CREATE',
                     'deskripsi' => 'Tertolak karena NO. BAPB tidak unik ' . $request->no_bapb,
-                    'id_menu' => null,
-                    'nama_menu' => 'Barang Masuk HO',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' => $kode,
                     'nama_tabel' => 'barang_masuk',
                     'id_tabel_lama' => null,
@@ -94,7 +97,7 @@ class BarangMasukController extends Controller
                 'no_bapb' => $request->no_bapb,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
-                'ttd_karyawan' => $karyawan->ttd_karyawan,
+                'ttd_karyawan' => $fileName,
 
                 'id_area' => $area->id,
                 'nama_area' => $area->nama_area,
@@ -110,8 +113,8 @@ class BarangMasukController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
                 'deskripsi' => 'Menambah BAPB baru ' . $request->no_bapb,
-                'id_menu' => null,
-                'nama_menu' => 'Barang Masuk HO',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' => $kode,
                 'nama_tabel' => 'barang_masuk',
                 'id_tabel_lama' => null,
@@ -171,6 +174,7 @@ class BarangMasukController extends Controller
         try {
             $rules = [
                 'id_bapb_delete' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -184,9 +188,24 @@ class BarangMasukController extends Controller
                 ]);
             }
 
-            $menu = BarangMasuk::where('id', $request->id_bapb_delete)->first();
+            $bapb = BarangMasuk::where('id', $request->id_bapb_delete)->first();
+            $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
+            $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+            Log::create([
+                'id' => Uuid::uuid4(),
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama_karyawan,
+                'aksi' => 'DELETE',
+                'deskripsi' => 'Menghapus BAPB ' . $bapb->no_bapb,
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
+                'nama_tabel' => 'barang_masuk',
+                'id_tabel_lama' => $bapb->id,
+                'keterangan' => 'success',
+            ]);
 
-            $menu->delete();
+            $bapb->delete();
 
             return response()->json([
                 'success' => true,
@@ -204,6 +223,7 @@ class BarangMasukController extends Controller
             $rules = [
                 'no_bapb' => 'required',
                 'ttd_karyawan' => 'nullable|string',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -218,6 +238,7 @@ class BarangMasukController extends Controller
             }
             $user = Auth::user();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $area = Area::where('id', $karyawan->id_area)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $bapb_unik = BarangMasuk::where('no_bapb', $request->no_bapb)
@@ -232,9 +253,8 @@ class BarangMasukController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'UPDATE',
                     'deskripsi' => 'Tertolak karena tidak unik ' . $request->no_bapb,
-                    'id_menu' => null,
-                    'nama_menu' => 'Supplier',
-                    'id_tabel_baru' =>  $request->id_bapb_update,
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'nama_tabel' => 'barang_bapb',
                     'id_tabel_lama' => null,
                     'keterangan' => 'failed',
@@ -277,18 +297,16 @@ class BarangMasukController extends Controller
 
                 'id_proyek' => $proyek->id,
                 'nama_proyek' => $proyek->nama_proyek,
-                'created_at' => now(),
                 'updated_at' => now(),
             ]);
             Log::create([
                 'id' => Uuid::uuid4(),
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
-                'aksi' => 'CREATE',
+                'aksi' => 'UPDATE',
                 'deskripsi' => 'Mengupdate BAPB ' . $request->no_bapb,
-                'id_menu' => null,
-                'nama_menu' => 'Barang Masuk HO',
-                'id_tabel_baru' => $request->id_bapb_update,
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'nama_tabel' => 'barang_masuk',
                 'id_tabel_lama' => null,
                 'keterangan' => 'success',

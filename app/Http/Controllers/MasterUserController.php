@@ -18,6 +18,7 @@ class MasterUserController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
@@ -30,7 +31,8 @@ class MasterUserController extends Controller
         return view('master/user/index', compact(
             'karyawan',
             'proyek',
-            'parent'
+            'parent',
+            'menu_id'
         ));
     }
     public function create(Request $request)

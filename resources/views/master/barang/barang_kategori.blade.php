@@ -33,6 +33,7 @@
             <div class="modal-body">
                 <form id="form_tambah_kategori">
                     @csrf
+                    <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="nama_kategori" class="form-label">Nama Kategori</label>
                         <input type="text" class="form-control" placeholder="Nama Kategori" id="nama_kategori_add"
@@ -83,6 +84,7 @@
             <div class="modal-body">
                 <form id="form_update_kategori">
                     @csrf
+                    <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="nama_kategori" class="form-label">Nama Kategori</label>
                         <input type="hidden" class="form-control" id="id_kategori_update" name="id_kategori_update">

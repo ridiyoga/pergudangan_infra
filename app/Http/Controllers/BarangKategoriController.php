@@ -19,13 +19,14 @@ class BarangKategoriController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('master/barang/barang_kategori', compact('parent'));
+        return view('master/barang/barang_kategori', compact('parent', 'menu_id'));
     }
     public function create(Request $request)
     {
@@ -33,6 +34,7 @@ class BarangKategoriController extends Controller
         try {
             $rules = [
                 'nama_kategori' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -46,6 +48,7 @@ class BarangKategoriController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $kode = Uuid::uuid4();
@@ -60,8 +63,8 @@ class BarangKategoriController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'CREATE',
                     'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_kategori,
-                    'id_menu' => null,
-                    'nama_menu' => 'Kategori',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' => $kode,
                     'nama_tabel' => 'barang_kategori',
                     'id_tabel_lama' => null,
@@ -88,8 +91,8 @@ class BarangKategoriController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
                 'deskripsi' => 'Menambah barang baru ' . $request->nama_kategori,
-                'id_menu' => null,
-                'nama_menu' => 'Kategori',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' => $kode,
                 'nama_tabel' => 'barang_kategori',
                 'id_tabel_lama' => null,
@@ -161,6 +164,7 @@ class BarangKategoriController extends Controller
         try {
             $rules = [
                 'nama_kategori' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -174,6 +178,7 @@ class BarangKategoriController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $kategori_unik = BarangKategori::where('nama_kategori', $request->nama_kategori)
                 ->where('id_proyek', $user->id_proyek)
@@ -187,8 +192,8 @@ class BarangKategoriController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'UPDATE',
                     'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_kategori,
-                    'id_menu' => null,
-                    'nama_menu' => 'Kategori',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' =>  $request->id_kategori_update,
                     'nama_tabel' => 'barang_kategori',
                     'id_tabel_lama' => null,
@@ -212,8 +217,8 @@ class BarangKategoriController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
                 'deskripsi' => 'Update data barang ' . $request->nama_kategori,
-                'id_menu' => null,
-                'nama_menu' => 'Kategori',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' =>  $request->id_kategori_update,
                 'nama_tabel' => 'barang_kategori',
                 'id_tabel_lama' => null,

@@ -33,6 +33,7 @@
             <div class="modal-body">
                 <form id="form_tambah_supplier">
                     @csrf
+                    <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="nama_supplier" class="form-label">Nama Supplier</label>
                         <input type="text" class="form-control" placeholder="Nama Supplier" id="nama_supplier_add"
@@ -83,6 +84,7 @@
             <div class="modal-body">
                 <form id="form_update_supplier">
                     @csrf
+                    <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="nama_supplier" class="form-label">Nama Supplier</label>
                         <input type="hidden" class="form-control" id="id_supplier_update" name="id_supplier_update">

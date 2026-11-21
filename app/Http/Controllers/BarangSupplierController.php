@@ -19,13 +19,14 @@ class BarangSupplierController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('master/barang/barang_supplier', compact('parent'));
+        return view('master/barang/barang_supplier', compact('parent', 'menu_id'));
     }
     public function create(Request $request)
     {
@@ -33,6 +34,7 @@ class BarangSupplierController extends Controller
         try {
             $rules = [
                 'nama_supplier' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -46,6 +48,7 @@ class BarangSupplierController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $kode = Uuid::uuid4();
@@ -60,8 +63,8 @@ class BarangSupplierController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'CREATE',
                     'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_supplier,
-                    'id_menu' => null,
-                    'nama_menu' => 'Supplier',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' => $kode,
                     'nama_tabel' => 'barang_supplier',
                     'id_tabel_lama' => null,
@@ -88,8 +91,8 @@ class BarangSupplierController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
                 'deskripsi' => 'Menambah supplier baru ' . $request->nama_supplier,
-                'id_menu' => null,
-                'nama_menu' => 'Supplier',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' => $kode,
                 'nama_tabel' => 'barang_supplier',
                 'id_tabel_lama' => null,
@@ -161,6 +164,7 @@ class BarangSupplierController extends Controller
         try {
             $rules = [
                 'nama_supplier' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -174,6 +178,7 @@ class BarangSupplierController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $supplier_unik = BarangSupplier::where('nama_supplier', $request->nama_supplier)
                 ->where('id_proyek', $user->id_proyek)
@@ -187,8 +192,8 @@ class BarangSupplierController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'UPDATE',
                     'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_supplier,
-                    'id_menu' => null,
-                    'nama_menu' => 'Supplier',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' =>  $request->id_supplier_update,
                     'nama_tabel' => 'barang_supplier',
                     'id_tabel_lama' => null,
@@ -212,8 +217,8 @@ class BarangSupplierController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
                 'deskripsi' => 'Update data supplier ' . $request->nama_supplier,
-                'id_menu' => null,
-                'nama_menu' => 'Supplier',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' =>  $request->id_supplier_update,
                 'nama_tabel' => 'barang_supplier',
                 'id_tabel_lama' => null,

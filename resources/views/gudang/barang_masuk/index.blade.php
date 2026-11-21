@@ -63,6 +63,7 @@
             <div class="modal-body">
                 <form id="form_tambah_barang_masuk">
                     @csrf
+                    <input type="hidden" id="menu_id_add" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="no_bapb" class="form-label">No. BAPB</label>
                         <input type="text" class="form-control" placeholder="No. BAPB" id="no_bapb_add"
@@ -126,6 +127,7 @@
                 </div>
                 <form id="form_delete_barang_masuk">
                     @csrf
+                    <input type="hidden" id="menu_id_delete" name="menu_id" value="{{ $menu_id }}">
                     <input type="hidden" class="form-control" id="id_bapb_delete" name="id_bapb_delete">
 
                 </form>
@@ -148,6 +150,7 @@
             <div class="modal-body">
                 <form id="form_update_barang_masuk">
                     @csrf
+                    <input type="hidden" id="menu_id_update" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="no_bapb" class="form-label">No. BAPB</label>
                         <input type="hidden" class="form-control" id="id_bapb_update" name="id_bapb_update">

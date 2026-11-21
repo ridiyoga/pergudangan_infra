@@ -15,6 +15,7 @@ class MasterMenuController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
@@ -26,6 +27,7 @@ class MasterMenuController extends Controller
         return view('master/menu/index', compact(
             'parent',
             'parent_menu',
+            'menu_id',
         ));
     }
     public function create(Request $request)

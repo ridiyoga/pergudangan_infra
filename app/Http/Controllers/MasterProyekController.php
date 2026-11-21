@@ -16,13 +16,14 @@ class MasterProyekController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('master/proyek/index', compact('parent'));
+        return view('master/proyek/index', compact('parent', 'menu_id'));
     }
     public function create(Request $request)
     {

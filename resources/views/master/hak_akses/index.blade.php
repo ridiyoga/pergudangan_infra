@@ -31,6 +31,7 @@
             <div class="modal-body">
                 <form id="form_update_hak_akses">
                     @csrf
+                    <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <div class="mb-2">
                         <label for="nama_jabatan" class="form-label">Nama Jabatan</label>
                         <input type="hidden" class="form-control" id="id_jabatan_update" name="id_jabatan">

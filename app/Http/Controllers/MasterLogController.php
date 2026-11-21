@@ -13,13 +13,14 @@ class MasterLogController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('log', compact('parent'));
+        return view('log', compact('parent', 'menu_id'));
     }
     public function log_dt()
     {

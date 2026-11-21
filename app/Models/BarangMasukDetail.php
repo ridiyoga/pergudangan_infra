@@ -23,6 +23,7 @@ class BarangMasukDetail extends Model
 
         'tanggal_masuk',
         'surat_jalan',
+        'id_supplier',
         'supplier',
         'id_barang',
         'nama_barang',

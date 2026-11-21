@@ -18,6 +18,7 @@ class KaryawanController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $area = Area::orderBy('nama_area')->get();
 
@@ -31,7 +32,8 @@ class KaryawanController extends Controller
         return view('master/karyawan/index', compact(
             'jabatan',
             'parent',
-            'area'
+            'area',
+            'menu_id'
         ));
     }
     public function create(Request $request)

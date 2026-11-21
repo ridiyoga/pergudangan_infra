@@ -17,6 +17,7 @@ class MasterHakAksesController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
@@ -24,7 +25,7 @@ class MasterHakAksesController extends Controller
             ->orderBy('nama_menu')
             ->get();
         // dd($parent);
-        return view('master/hak_akses/index', compact('parent'));
+        return view('master/hak_akses/index', compact('parent', 'menu_id'));
     }
 
     public function hak_akses_dt()
@@ -90,6 +91,7 @@ class MasterHakAksesController extends Controller
         $rules = [
             'id_jabatan' => 'required|uuid|exists:master_jabatan,id',
             'nama_jabatan' => 'required',
+            'menu_id' => 'required|uuid|exists:master_menu,id',
             'id_menu' => 'nullable|array',
             'id_menu.*' => 'required|uuid|exists:master_menu,id',
         ];
@@ -100,6 +102,10 @@ class MasterHakAksesController extends Controller
             'id_jabatan.exists' => 'Jabatan tidak ditemukan',
 
             'nama_jabatan.required' => 'Nama Jabatan wajib diisi',
+
+            'menu_id.required' => 'ID Menu halaman wajib diisi',
+            'menu_id.uuid' => 'Format ID Menu halaman tidak valid',
+            'menu_id.exists' => 'Menu halaman tidak ditemukan',
 
             'id_menu.array' => 'Format menu tidak valid',
             'id_menu.*.required' => 'ID Menu wajib diisi',
@@ -129,14 +135,15 @@ class MasterHakAksesController extends Controller
             }
             $user = Auth::user();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+            $menu = Menu::where('id', $request->menu_id)->first();
             Log::create([
                 'id' => Uuid::uuid4(),
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
                 'deskripsi' => 'Memperbaharui hak akses pada jabatan ' . $jabatan->nama_jabatan,
-                'id_menu' => null,
-                'nama_menu' => 'Hak Akses',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' => null,
                 'nama_tabel' => 'master_hak_akses',
                 'id_tabel_lama' => null,

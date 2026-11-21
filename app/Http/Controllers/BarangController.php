@@ -19,6 +19,7 @@ class BarangController extends Controller
 {
     public function index($id)
     {
+        $menu_id = $id;
         $user = Auth::user();
         $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
         $parent = HakAkses::where('id_jabatan', $karyawan->id_jabatan)
@@ -26,7 +27,7 @@ class BarangController extends Controller
             ->orderBy('nama_menu')
             ->get();
         $kategori = BarangKategori::where('id_proyek', $user->id_proyek)->get();
-        return view('master/barang/index', compact('parent', 'kategori'));
+        return view('master/barang/index', compact('parent', 'kategori', 'menu_id'));
     }
     public function create(Request $request)
     {
@@ -35,6 +36,7 @@ class BarangController extends Controller
             $rules = [
                 'nama_barang' => 'required',
                 'kode_barang' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -49,6 +51,7 @@ class BarangController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $kategori = BarangKategori::where('id', $request->id_kategori)->first();
@@ -67,8 +70,8 @@ class BarangController extends Controller
                         'nama_karyawan' => $karyawan->nama_karyawan,
                         'aksi' => 'CREATE',
                         'deskripsi' => 'Tertolak karena nama tidak unik ' . $request->nama_barang,
-                        'id_menu' => null,
-                        'nama_menu' => 'Nama Barang',
+                        'id_menu' => $menu->id,
+                        'nama_menu' => $menu->nama_menu,
                         'id_tabel_baru' => $kode,
                         'nama_tabel' => 'barang',
                         'id_tabel_lama' => null,
@@ -85,8 +88,8 @@ class BarangController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'CREATE',
                     'deskripsi' => 'Tertolak karena kode tidak unik ' . $request->kode_barang,
-                    'id_menu' => null,
-                    'nama_menu' => 'Nama Barang',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' => $kode,
                     'nama_tabel' => 'barang',
                     'id_tabel_lama' => null,
@@ -117,8 +120,8 @@ class BarangController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
                 'deskripsi' => 'Menambah barang baru ' . $request->nama_barang,
-                'id_menu' => null,
-                'nama_menu' => 'Nama Barang',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' => $kode,
                 'nama_tabel' => 'barang',
                 'id_tabel_lama' => null,
@@ -194,6 +197,7 @@ class BarangController extends Controller
             $rules = [
                 'nama_barang' => 'required',
                 'kode_barang' => 'required',
+                'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
@@ -208,6 +212,7 @@ class BarangController extends Controller
                 ]);
             }
             $user = Auth::user();
+            $menu = Menu::where('id', $request->menu_id)->first();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $barang_unik = Barang::where('nama_barang', $request->nama_barang)
                 ->where('id_proyek', $user->id_proyek)
@@ -227,8 +232,8 @@ class BarangController extends Controller
                         'nama_karyawan' => $karyawan->nama_karyawan,
                         'aksi' => 'UPDATE',
                         'deskripsi' => 'Tertolak karena nama tidak unik ' . $request->nama_barang,
-                        'id_menu' => null,
-                        'nama_menu' => 'Nama Barang',
+                        'id_menu' => $menu->id,
+                        'nama_menu' => $menu->nama_menu,
                         'id_tabel_baru' =>  $request->id_barang_update,
                         'nama_tabel' => 'barang',
                         'id_tabel_lama' => null,
@@ -246,8 +251,8 @@ class BarangController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'UPDATE',
                     'deskripsi' => 'Tertolak karena kode tidak unik ' . $request->kode_barang,
-                    'id_menu' => null,
-                    'nama_menu' => 'Nama Barang',
+                    'id_menu' => $menu->id,
+                    'nama_menu' => $menu->nama_menu,
                     'id_tabel_baru' =>  $request->id_barang_update,
                     'nama_tabel' => 'barang',
                     'id_tabel_lama' => null,
@@ -275,8 +280,8 @@ class BarangController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
                 'deskripsi' => 'Update data barang ' . $request->nama_barang,
-                'id_menu' => null,
-                'nama_menu' => 'Nama Barang',
+                'id_menu' => $menu->id,
+                'nama_menu' => $menu->nama_menu,
                 'id_tabel_baru' =>  $request->id_barang_update,
                 'nama_tabel' => 'barang',
                 'id_tabel_lama' => null,
