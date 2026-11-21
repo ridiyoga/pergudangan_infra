@@ -3,6 +3,7 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangKategoriController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\BarangSupplierController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LoginController;
@@ -88,6 +89,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/kategori_dt', [BarangKategoriController::class, 'kategori_dt'])->name('kategori_dt');
     Route::post('/kategori_delete', [BarangKategoriController::class, 'delete'])->name('kategori_delete');
     Route::post('/kategori_update', [BarangKategoriController::class, 'update'])->name('kategori_update');
+
+    // Master Supplier
+    Route::get('/supplier/{menu_id}', [BarangSupplierController::class, 'index'])->name('supplier');
+    Route::post('/supplier_create', [BarangSupplierController::class, 'create'])->name('supplier_create');
+    Route::get('/supplier_dt', [BarangSupplierController::class, 'supplier_dt'])->name('supplier_dt');
+    Route::post('/supplier_delete', [BarangSupplierController::class, 'delete'])->name('supplier_delete');
+    Route::post('/supplier_update', [BarangSupplierController::class, 'update'])->name('supplier_update');
 
     // Barang Masuk
     Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');

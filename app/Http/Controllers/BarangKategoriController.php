@@ -69,7 +69,7 @@ class BarangKategoriController extends Controller
                 ]);
                 return response()->json([
                     'status' => false,
-                    'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    'message' => 'Nama kategori sudah digunakan dalam proyek ini!'
                 ], 422);
             }
             BarangKategori::create([
@@ -197,7 +197,7 @@ class BarangKategoriController extends Controller
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    'message' => 'Nama kategori sudah digunakan dalam proyek ini!'
                 ], 422);
             }
             BarangKategori::where('id', $request->id_kategori_update)->update([

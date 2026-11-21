@@ -12,6 +12,7 @@
                     <tr>
                         <th>NO.</th>
                         <th>NAMA BARANG</th>
+                        <th>KODE BARANG</th>
                         <th>SATUAN</th>
                         <th>PENGINPUT / PENGEDIT</th>
                         <th>AKSI</th>
@@ -35,9 +36,14 @@
                 <form id="form_tambah_barang">
                     @csrf
                     <div class="mb-2">
-                        <label for="nama_barang" class="form-label">Satuan</label>
+                        <label for="nama_barang" class="form-label">Nama Barang</label>
                         <input type="text" class="form-control" placeholder="Nama Barang" id="nama_barang_add"
                             name="nama_barang">
+                    </div>
+                    <div class="mb-2">
+                        <label for="kode_barang" class="form-label">Kode Barang</label>
+                        <input type="text" class="form-control" placeholder="Kode Barang" id="kode_barang_add"
+                            name="kode_barang">
                     </div>
                     <div class="mb-2">
                         <label for="satuan" class="form-label">Satuan</label>
@@ -94,6 +100,11 @@
                         <input type="text" class="form-control" id="nama_barang_update" name="nama_barang">
                     </div>
                     <div class="mb-2">
+                        <label for="kode_barang" class="form-label">Kode Barang</label>
+                        <input type="text" class="form-control" placeholder="Kode Barang" id="kode_barang_update"
+                            name="kode_barang">
+                    </div>
+                    <div class="mb-2">
                         <label for="satuan" class="form-label">Satuan</label>
                         <input type="text" class="form-control" id="satuan_update" name="satuan">
                     </div>
@@ -137,9 +148,11 @@
         $(document).on('click', '#btn_update_datatable', function(e) {
             var id = $(this).data("id");
             var nama_barang = $(this).data("nama_barang");
+            var kode_barang = $(this).data("kode_barang");
             var satuan = $(this).data("satuan");
             $('#id_barang_update').val(id);
             $('#nama_barang_update').val(nama_barang);
+            $('#kode_barang_update').val(kode_barang);
             $('#satuan_update').val(satuan);
             $('#modal_update_barang').modal('show');
         });
@@ -163,6 +176,10 @@
                 {
                     data: "nama_barang",
                     name: "nama_barang"
+                },
+                {
+                    data: "kode_barang",
+                    name: "kode_barang"
                 },
                 {
                     data: "satuan",

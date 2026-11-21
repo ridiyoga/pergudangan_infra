@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
-use App\Models\BarangKategori;
 use App\Models\Menu;
 use App\Models\HakAkses;
 use App\Models\Karyawan;
@@ -32,11 +31,13 @@ class BarangController extends Controller
         // dd($user);
         try {
             $rules = [
-                'nama_kategori' => 'required',
+                'nama_barang' => 'required',
+                'kode_barang' => 'required',
 
             ];
             $messages = [
-                'nama_kategori.required' => 'Nama Barang wajib diisi',
+                'nama_barang.required' => 'Nama Barang wajib diisi',
+                'kode_barang.required' => 'Kode Barang wajib diisi',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -49,17 +50,38 @@ class BarangController extends Controller
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $kode = Uuid::uuid4();
-            $barang_unik = BarangKategori::where('nama_kategori', $request->nama_kategori)
+            $barang_unik = Barang::where('nama_barang', $request->nama_barang)
                 ->where('id_proyek', $user->id_proyek)
                 ->exists();
-
-            if ($barang_unik) {
+            $kode_unik = Barang::where('kode_barang', $request->kode_barang)
+                ->where('id_proyek', $user->id_proyek)
+                ->exists();
+            if ($kode_unik) {
+                if ($barang_unik) {
+                    Log::create([
+                        'id' => Uuid::uuid4(),
+                        'id_karyawan' => $karyawan->id,
+                        'nama_karyawan' => $karyawan->nama_karyawan,
+                        'aksi' => 'CREATE',
+                        'deskripsi' => 'Tertolak karena nama tidak unik ' . $request->nama_barang,
+                        'id_menu' => null,
+                        'nama_menu' => 'Nama Barang',
+                        'id_tabel_baru' => $kode,
+                        'nama_tabel' => 'barang',
+                        'id_tabel_lama' => null,
+                        'keterangan' => 'failed',
+                    ]);
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    ], 422);
+                }
                 Log::create([
                     'id' => Uuid::uuid4(),
                     'id_karyawan' => $karyawan->id,
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'CREATE',
-                    'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_kategori,
+                    'deskripsi' => 'Tertolak karena kode tidak unik ' . $request->kode_barang,
                     'id_menu' => null,
                     'nama_menu' => 'Nama Barang',
                     'id_tabel_baru' => $kode,
@@ -69,12 +91,13 @@ class BarangController extends Controller
                 ]);
                 return response()->json([
                     'status' => false,
-                    'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    'message' => 'Kode barang sudah digunakan dalam proyek ini!'
                 ], 422);
             }
-            BarangKategori::create([
+            Barang::create([
                 'id' => $kode,
-                'nama_kategori' => $request->nama_kategori,
+                'nama_barang' => $request->nama_barang,
+                'kode_barang' => $request->kode_barang,
                 'satuan' => $request->satuan,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
@@ -88,7 +111,7 @@ class BarangController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
-                'deskripsi' => 'Menambah barang baru ' . $request->nama_kategori,
+                'deskripsi' => 'Menambah barang baru ' . $request->nama_barang,
                 'id_menu' => null,
                 'nama_menu' => 'Nama Barang',
                 'id_tabel_baru' => $kode,
@@ -109,7 +132,7 @@ class BarangController extends Controller
     public function barang_dt()
     {
         $user = Auth::user();
-        $data = BarangKategori::where('id_proyek', $user->id_proyek)->get();
+        $data = Barang::where('id_proyek', $user->id_proyek)->get();
 
 
         return DataTables::of($data)
@@ -118,7 +141,8 @@ class BarangController extends Controller
                             <button class="btn btn-warning m-1" id="btn_update_datatable"
                                 data-id="' . $row->id . '"
                                 data-satuan="' . $row->satuan . '"
-                                data-nama_kategori="' . $row->nama_kategori . '">
+                                data-kode_barang="' . $row->kode_barang . '"
+                                data-nama_barang="' . $row->nama_barang . '">
                                  <i class="bi bi-pencil"></i></button>';
                 // $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
                 return $action;
@@ -144,7 +168,7 @@ class BarangController extends Controller
     //             ]);
     //         }
 
-    //         $menu = BarangKategori::where('id', $request->id_barang_delete)->first();
+    //         $menu = Barang::where('id', $request->id_barang_delete)->first();
 
     //         $menu->delete();
 
@@ -162,11 +186,13 @@ class BarangController extends Controller
         // dd($request->all());
         try {
             $rules = [
-                'nama_kategori' => 'required',
+                'nama_barang' => 'required',
+                'kode_barang' => 'required',
 
             ];
             $messages = [
-                'nama_kategori.required' => 'Nama Barang wajib diisi',
+                'nama_barang.required' => 'Nama Barang wajib diisi',
+                'kode_barang.required' => 'Kode Barang wajib diisi',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -177,18 +203,42 @@ class BarangController extends Controller
             }
             $user = Auth::user();
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
-            $barang_unik = BarangKategori::where('nama_kategori', $request->nama_kategori)
+            $barang_unik = Barang::where('nama_barang', $request->nama_barang)
+                ->where('id_proyek', $user->id_proyek)
+                ->where('id', '!=', $request->id_barang_update)
+                ->exists();
+            $kode_unik = Barang::where('kode_barang', $request->kode_barang)
                 ->where('id_proyek', $user->id_proyek)
                 ->where('id', '!=', $request->id_barang_update)
                 ->exists();
 
-            if ($barang_unik) {
+            if ($kode_unik) {
+                if ($barang_unik) {
+                    Log::create([
+                        'id' => Uuid::uuid4(),
+                        'id_karyawan' => $karyawan->id,
+                        'nama_karyawan' => $karyawan->nama_karyawan,
+                        'aksi' => 'UPDATE',
+                        'deskripsi' => 'Tertolak karena nama tidak unik ' . $request->nama_barang,
+                        'id_menu' => null,
+                        'nama_menu' => 'Nama Barang',
+                        'id_tabel_baru' =>  $request->id_barang_update,
+                        'nama_tabel' => 'barang',
+                        'id_tabel_lama' => null,
+                        'keterangan' => 'failed',
+                    ]);
+
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    ], 422);
+                }
                 Log::create([
                     'id' => Uuid::uuid4(),
                     'id_karyawan' => $karyawan->id,
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'aksi' => 'UPDATE',
-                    'deskripsi' => 'Tertolak karena tidak unik ' . $request->nama_kategori,
+                    'deskripsi' => 'Tertolak karena kode tidak unik ' . $request->kode_barang,
                     'id_menu' => null,
                     'nama_menu' => 'Nama Barang',
                     'id_tabel_baru' =>  $request->id_barang_update,
@@ -199,11 +249,12 @@ class BarangController extends Controller
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Nama barang sudah digunakan dalam proyek ini!'
+                    'message' => 'Kode barang sudah digunakan dalam proyek ini!'
                 ], 422);
             }
-            BarangKategori::where('id', $request->id_barang_update)->update([
-                'nama_kategori' => $request->nama_kategori,
+            Barang::where('id', $request->id_barang_update)->update([
+                'nama_barang' => $request->nama_barang,
+                'kode_barang' => $request->kode_barang,
                 'satuan' => $request->satuan,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
@@ -214,7 +265,7 @@ class BarangController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
-                'deskripsi' => 'Update data barang ' . $request->nama_kategori,
+                'deskripsi' => 'Update data barang ' . $request->nama_barang,
                 'id_menu' => null,
                 'nama_menu' => 'Nama Barang',
                 'id_tabel_baru' =>  $request->id_barang_update,
