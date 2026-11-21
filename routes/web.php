@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarangKategoriController;
+use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LoginController;
@@ -72,12 +74,27 @@ Route::middleware('auth')->group(function () {
     Route::post('/user_delete', [MasterUserController::class, 'delete'])->name('user_delete');
     Route::post('/user_update', [MasterUserController::class, 'update'])->name('user_update');
 
+
     // Master Barang
     Route::get('/barang/{menu_id}', [BarangController::class, 'index'])->name('barang');
     Route::post('/barang_create', [BarangController::class, 'create'])->name('barang_create');
     Route::get('/barang_dt', [BarangController::class, 'barang_dt'])->name('barang_dt');
     Route::post('/barang_delete', [BarangController::class, 'delete'])->name('barang_delete');
     Route::post('/barang_update', [BarangController::class, 'update'])->name('barang_update');
+
+    // Master Kategori
+    Route::get('/kategori/{menu_id}', [BarangKategoriController::class, 'index'])->name('kategori');
+    Route::post('/kategori_create', [BarangKategoriController::class, 'create'])->name('kategori_create');
+    Route::get('/kategori_dt', [BarangKategoriController::class, 'kategori_dt'])->name('kategori_dt');
+    Route::post('/kategori_delete', [BarangKategoriController::class, 'delete'])->name('kategori_delete');
+    Route::post('/kategori_update', [BarangKategoriController::class, 'update'])->name('kategori_update');
+
+    // Barang Masuk
+    Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');
+    Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
+    Route::get('/barang_masuk_dt', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
+    Route::post('/barang_masuk_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_delete');
+    Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
 
     // Master User
     Route::get('/log/{menu_id}', [MasterLogController::class, 'index'])->name('log');

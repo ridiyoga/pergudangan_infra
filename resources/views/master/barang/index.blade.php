@@ -53,7 +53,7 @@
     </div>
 </div>
 {{-- Modal Delete --}}
-<div class="modal fade" id="modal_delete_barang" tabindex="-1">
+{{-- <div class="modal fade" id="modal_delete_barang" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 {{-- Modal Update --}}
 <div class="modal fade" id="modal_update_barang" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -129,11 +129,11 @@
         $(document).on('click', '#btn_tambah_barang', function(e) {
             $('#modal_barang').modal('show');
         });
-        $(document).on('click', '#btn_delete_datatable', function(e) {
-            var id = $(this).data("id");
-            $('#id_barang_delete').val(id);
-            $('#modal_delete_barang').modal('show');
-        });
+        // $(document).on('click', '#btn_delete_datatable', function(e) {
+        //     var id = $(this).data("id");
+        //     $('#id_barang_delete').val(id);
+        //     $('#modal_delete_barang').modal('show');
+        // });
         $(document).on('click', '#btn_update_datatable', function(e) {
             var id = $(this).data("id");
             var nama_barang = $(this).data("nama_barang");
@@ -233,55 +233,55 @@
                 }
             });
         });
-        $(document).on('click', '#btn_delete_barang', function(e) {
-            e.preventDefault();
+        // $(document).on('click', '#btn_delete_barang', function(e) {
+        //     e.preventDefault();
 
-            $.ajax({
-                url: "{{ url('/barang_delete') }}",
-                type: "POST",
-                data: $('#form_delete_barang').serialize(),
-                dataType: 'json',
-                beforeSend: function() {
-                    Swal.fire({
-                        title: 'Memproses...',
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-                },
+        //     $.ajax({
+        //         url: "{{ url('/barang_delete') }}",
+        //         type: "POST",
+        //         data: $('#form_delete_barang').serialize(),
+        //         dataType: 'json',
+        //         beforeSend: function() {
+        //             Swal.fire({
+        //                 title: 'Memproses...',
+        //                 allowOutsideClick: false,
+        //                 didOpen: () => Swal.showLoading()
+        //             });
+        //         },
 
-                success: function(data) {
-                    if (data.errors) {
-                        showValidationErrors(data.errors);
-                        return;
-                    }
+        //         success: function(data) {
+        //             if (data.errors) {
+        //                 showValidationErrors(data.errors);
+        //                 return;
+        //             }
 
-                    Swal.fire({
-                        title: 'Sukses!',
-                        text: 'Data Berhasil Dihapus',
-                        icon: 'success'
-                    });
+        //             Swal.fire({
+        //                 title: 'Sukses!',
+        //                 text: 'Data Berhasil Dihapus',
+        //                 icon: 'success'
+        //             });
 
-                    $('#form_delete_barang')[0].reset();
-                    $('#modal_delete_barang').modal('hide');
+        //             $('#form_delete_barang')[0].reset();
+        //             $('#modal_delete_barang').modal('hide');
 
-                    table.ajax.reload();
-                },
+        //             table.ajax.reload();
+        //         },
 
-                error: function(xhr) {
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        showValidationErrors(errors);
-                        return;
-                    }
+        //         error: function(xhr) {
+        //             const errors = xhr.responseJSON?.errors;
+        //             if (errors) {
+        //                 showValidationErrors(errors);
+        //                 return;
+        //             }
 
-                    Swal.fire({
-                        title: 'Error!',
-                        text: xhr.responseJSON?.message || 'Data Gagal Dihapus',
-                        icon: 'error'
-                    })
-                }
-            });
-        });
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: xhr.responseJSON?.message || 'Data Gagal Dihapus',
+        //                 icon: 'error'
+        //             })
+        //         }
+        //     });
+        // });
         $(document).on('click', '#btn_update_barang', function(e) {
             e.preventDefault();
             // console.log('asoy');
