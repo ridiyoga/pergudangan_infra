@@ -49,11 +49,11 @@ class BarangSupplierController extends Controller
             $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
             $proyek = Proyek::where('id', $user->id_proyek)->first();
             $kode = Uuid::uuid4();
-            $barang_unik = BarangSupplier::where('nama_supplier', $request->nama_supplier)
+            $supplier_unik = BarangSupplier::where('nama_supplier', $request->nama_supplier)
                 ->where('id_proyek', $user->id_proyek)
                 ->exists();
 
-            if ($barang_unik) {
+            if ($supplier_unik) {
                 Log::create([
                     'id' => Uuid::uuid4(),
                     'id_karyawan' => $karyawan->id,
@@ -87,7 +87,7 @@ class BarangSupplierController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'CREATE',
-                'deskripsi' => 'Menambah barang baru ' . $request->nama_supplier,
+                'deskripsi' => 'Menambah supplier baru ' . $request->nama_supplier,
                 'id_menu' => null,
                 'nama_menu' => 'Supplier',
                 'id_tabel_baru' => $kode,
@@ -211,7 +211,7 @@ class BarangSupplierController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
-                'deskripsi' => 'Update data barang ' . $request->nama_supplier,
+                'deskripsi' => 'Update data supplier ' . $request->nama_supplier,
                 'id_menu' => null,
                 'nama_menu' => 'Supplier',
                 'id_tabel_baru' =>  $request->id_supplier_update,

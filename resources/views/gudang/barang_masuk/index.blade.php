@@ -9,18 +9,18 @@
         background: #ffffff;
     }
 
-    #sig canvas {
+    .signature-area canvas {
         width: 100% !important;
         height: 100% !important;
     }
 
     /* Efek saat area tanda tangan di-hover / aktif */
-    #sig {
+    .signature-area {
         transition: all 0.25s ease-in-out;
     }
 
-    #sig:hover,
-    #sig:focus-within {
+    .signature-area:hover,
+    .signature-area:focus-within {
         border-color: #2563eb !important;
         /* Biru terang */
         background-color: #ffffff !important;
@@ -41,6 +41,8 @@
                     <tr>
                         <th>NO.</th>
                         <th>No. BAPB</th>
+                        <th>PENGINPUT / PENGEDIT</th>
+                        <th>TANDA TANGAN</th>
                         <th>AKSI</th>
                     </tr>
                 </thead>
@@ -67,7 +69,8 @@
                             name="no_bapb">
                     </div>
                     <!-- Canvas Container dengan Dashed Border & Accent Color -->
-                    <div id="sig" class="kbw-signature rounded-4 position-relative overflow-hidden mb-2"
+                    <div id="sig_add"
+                        class="signature-area kbw-signature rounded-4 position-relative overflow-hidden mb-2"
                         style="width: 100%; height: 210px; border: 2px dashed #93c5fd; background-color: #f8fafc;">
 
                         <!-- Watermark / Petunjuk dengan Warna Cerah -->
@@ -81,10 +84,11 @@
                         </div>
 
                         <!-- Canvas -->
-                        <canvas id="signature-pad"
+                        <canvas id="signature-pad-add"
                             style="width:100%; height:100%; touch-action: none !important; position: relative; z-index: 2; cursor: crosshair;"
                             hidden></canvas>
                     </div>
+                    <input type="hidden" id="signature_add" name="signature">
 
                     <!-- Baris Kontrol Bawah -->
                     <div class="d-flex justify-content-between align-items-center px-1 mb-2">
@@ -93,7 +97,7 @@
                             tangan
                         </span>
 
-                        <button type="button" class="btn btn-outline-danger btn-sm" id="clear">
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="clear_signature_add">
                             <span class="mdi mdi-trash-can-outline"></span>
                             <span>Hapus</span>
                         </button>
@@ -122,8 +126,8 @@
                 </div>
                 <form id="form_delete_barang_masuk">
                     @csrf
-                    <input type="hidden" class="form-control" id="id_barang_masuk_delete"
-                        name="id_barang_masuk_delete">
+                    <input type="hidden" class="form-control" id="id_bapb_delete" name="id_bapb_delete">
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -146,13 +150,43 @@
                     @csrf
                     <div class="mb-2">
                         <label for="no_bapb" class="form-label">No. BAPB</label>
-                        <input type="hidden" class="form-control" id="id_barang_masuk_update"
-                            name="id_barang_masuk_update">
+                        <input type="hidden" class="form-control" id="id_bapb_update" name="id_bapb_update">
                         <input type="text" class="form-control" id="no_bapb_update" name="no_bapb">
                     </div>
+                    <!-- Canvas Container dengan Dashed Border & Accent Color -->
+                    <div id="sig_update"
+                        class="signature-area kbw-signature rounded-4 position-relative overflow-hidden mb-2"
+                        style="width: 100%; height: 210px; border: 2px dashed #93c5fd; background-color: #f8fafc;">
 
+                        <!-- Watermark / Petunjuk dengan Warna Cerah -->
+                        <div
+                            class="position-absolute top-50 start-50 translate-middle text-center pe-none user-select-none opacity-75">
+                            <div
+                                class="mb-2 d-inline-flex align-items-center justify-content-center rounded-circle bg-white shadow-sm p-3 text-primary">
+                                <i class="fa-solid fa-pen-nib fs-4"></i>
+                            </div>
+                            <p class="small mb-0 text-secondary fw-medium">Tanda tangan di area ini</p>
+                        </div>
 
-                    <textarea id="signature" name="signature" style="display: none"></textarea>
+                        <!-- Canvas -->
+                        <canvas id="signature-pad-update"
+                            style="width:100%; height:100%; touch-action: none !important; position: relative; z-index: 2; cursor: crosshair;"
+                            hidden></canvas>
+                    </div>
+                    <input type="hidden" id="signature_update" name="signature">
+
+                    <!-- Baris Kontrol Bawah -->
+                    <div class="d-flex justify-content-between align-items-center px-1 mb-2">
+                        <span class="text-muted small" style="font-size: 0.8rem;">
+                            <i class="fa-regular fa-circle-check text-success me-1"></i>Gunakan mouse untuk tanda
+                            tangan
+                        </span>
+
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="clear_signature_update">
+                            <span class="mdi mdi-trash-can-outline"></span>
+                            <span>Hapus</span>
+                        </button>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -183,57 +217,79 @@
             })
         }
 
+        const createCanvas = $('#signature-pad-add')[0];
+        const updateCanvas = $('#signature-pad-update')[0];
+        const createSignaturePad = new SignaturePad(createCanvas);
+        const updateSignaturePad = new SignaturePad(updateCanvas);
+
+        function resizeCanvas(canvas, signaturePad) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+            signaturePad.clear();
+        }
+
         $(document).on('click', '#btn_tambah_barang_masuk', function(e) {
             $('#modal_barang_masuk').modal('show');
         });
         $(document).on('click', '#btn_delete_datatable', function(e) {
             var id = $(this).data("id");
-            $('#id_barang_masuk_delete').val(id);
+            $('#id_bapb_delete').val(id);
             $('#modal_delete_barang_masuk').modal('show');
         });
         $(document).on('click', '#btn_update_datatable', function(e) {
             var id = $(this).data("id");
             var no_bapb = $(this).data("no_bapb");
-            $('#id_barang_masuk_update').val(id);
+            $('#id_bapb_update').val(id);
             $('#no_bapb_update').val(no_bapb);
+            $('#signature-pad-update').removeAttr('hidden');
+            $('#signature_update').val('');
+            updateSignaturePad.clear();
             $('#modal_update_barang_masuk').modal('show');
         });
-        const canvas = $('#signature-pad')[0];
-        const signaturePad = new SignaturePad(canvas);
-
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-
-            const ctx = canvas.getContext('2d');
-            ctx.scale(ratio, ratio);
-
-            signaturePad.clear();
-        }
         $(document).on('click', '#btn_tambah_barang_masuk', function() {
-            $('#signature-pad').removeAttr('hidden');
+            $('#signature-pad-add').removeAttr('hidden');
+            $('#signature_add').val('');
+            createSignaturePad.clear();
             let id = $(this).data('id');
             $('#id_tidak_masuk').val(id);
-            $('#modal_barang_masuk').modal('show');
         });
 
         $('#modal_barang_masuk').on('shown.bs.modal', function() {
-            resizeCanvas();
+            resizeCanvas(createCanvas, createSignaturePad);
 
             console.log({
-                width: canvas.width,
-                height: canvas.height
+                width: createCanvas.width,
+                height: createCanvas.height
+            });
+        });
+        $('#modal_update_barang_masuk').on('shown.bs.modal', function() {
+            resizeCanvas(updateCanvas, updateSignaturePad);
+
+            console.log({
+                width: updateCanvas.width,
+                height: updateCanvas.height
             });
         });
 
+
         $(window).on('resize', function() {
-            resizeCanvas();
+            if ($('#modal_barang_masuk').hasClass('show')) {
+                resizeCanvas(createCanvas, createSignaturePad);
+            }
+            if ($('#modal_update_barang_masuk').hasClass('show')) {
+                resizeCanvas(updateCanvas, updateSignaturePad);
+            }
         });
 
-        $('#clear').on('click', function() {
-            signaturePad.clear();
+        $('#clear_signature_add').on('click', function() {
+            createSignaturePad.clear();
+            $('#signature_add').val('');
+        });
+        $('#clear_signature_update').on('click', function() {
+            updateSignaturePad.clear();
+            $('#signature_update').val('');
         });
 
         // TTD Versi Web End
@@ -259,6 +315,14 @@
                     name: "no_bapb"
                 },
                 {
+                    data: "nama_karyawan",
+                    name: "nama_karyawan"
+                },
+                {
+                    data: "ttd_karyawan",
+                    name: "ttd_karyawan"
+                },
+                {
                     data: "aksi",
                     name: "aksi",
                     orderable: false,
@@ -271,6 +335,9 @@
         });
         $(document).on('click', '#btn_create_barang_masuk', function(e) {
             e.preventDefault();
+            $('#signature_add').val(
+                createSignaturePad.isEmpty() ? '' : createSignaturePad.toDataURL()
+            );
 
             $.ajax({
                 url: "{{ url('/barang_masuk_create') }}",
@@ -298,6 +365,7 @@
                     });
 
                     $('#form_tambah_barang_masuk')[0].reset();
+                    createSignaturePad.clear();
                     $('#modal_barang_masuk').modal('hide');
 
                     table.ajax.reload();
@@ -371,6 +439,9 @@
         $(document).on('click', '#btn_update_barang_masuk', function(e) {
             e.preventDefault();
             // console.log('asoy');
+            $('#signature_update').val(
+                updateSignaturePad.isEmpty() ? '' : updateSignaturePad.toDataURL()
+            );
 
             $.ajax({
                 url: "{{ url('/barang_masuk_update') }}",
@@ -398,6 +469,7 @@
                     });
 
                     $('#form_update_barang_masuk')[0].reset();
+                    updateSignaturePad.clear();
                     $('#modal_update_barang_masuk').modal('hide');
 
                     table.ajax.reload();

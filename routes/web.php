@@ -104,6 +104,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/barang_masuk_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_delete');
     Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
 
+    // Barang Masuk
+    Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');
+    Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
+    Route::get('/barang_masuk_dt', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
+    Route::post('/barang_masuk_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_delete');
+    Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
+
     // Master User
     Route::get('/log/{menu_id}', [MasterLogController::class, 'index'])->name('log');
     Route::get('/log_dt', [MasterLogController::class, 'log_dt'])->name('log_dt');

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use App\Models\BarangMasuk;
 use App\Models\Menu;
 use App\Models\Jabatan;
 use App\Models\HakAkses;
 use App\Models\Karyawan;
+use App\Models\Log;
+use App\Models\Proyek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,10 +27,11 @@ class BarangMasukController extends Controller
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('master/barang/barang_masuk', compact('parent'));
+        return view('gudang/barang_masuk/index', compact('parent'));
     }
     public function create(Request $request)
     {
+        // dd($request->all());
         try {
             $rules = [
                 'no_bapb' => 'required',
@@ -42,11 +47,75 @@ class BarangMasukController extends Controller
                     'errors' => $validator->errors(),
                 ]);
             }
+            $kode = Uuid::uuid4();
 
+
+            $user = Auth::user();
+            $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+            $area = Area::where('id', $karyawan->id_area)->first();
+            $proyek = Proyek::where('id', $user->id_proyek)->first();
+            $kode = Uuid::uuid4();
+            $bapb_unik = BarangMasuk::where('no_bapb', $request->no_bapb)
+                ->where('id_proyek', $user->id_proyek)
+                ->exists();
+            if ($bapb_unik) {
+                Log::create([
+                    'id' => Uuid::uuid4(),
+                    'id_karyawan' => $karyawan->id,
+                    'nama_karyawan' => $karyawan->nama_karyawan,
+                    'aksi' => 'CREATE',
+                    'deskripsi' => 'Tertolak karena NO. BAPB tidak unik ' . $request->no_bapb,
+                    'id_menu' => null,
+                    'nama_menu' => 'Barang Masuk HO',
+                    'id_tabel_baru' => $kode,
+                    'nama_tabel' => 'barang_masuk',
+                    'id_tabel_lama' => null,
+                    'keterangan' => 'failed',
+                ]);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No. BAPB sudah digunakan dalam proyek ini!'
+                ], 422);
+            }
+            // dd($area);
+            $image = $request->signature;
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+
+            $fileName = 'signature_' . time() . '.png';
+            // dd($fileName);
+            // simpan ke storage
+            Storage::disk('public')->put(
+                'signatures/' . $fileName,
+                base64_decode($image)
+            );
             BarangMasuk::create([
-                'id' => Uuid::uuid4(),
+                'id' => $kode,
                 'no_bapb' => $request->no_bapb,
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama_karyawan,
+                'ttd_karyawan' => $karyawan->ttd_karyawan,
+
+                'id_area' => $area->id,
+                'nama_area' => $area->nama_area,
+
+                'id_proyek' => $proyek->id,
+                'nama_proyek' => $proyek->nama_proyek,
                 'created_at' => now(),
+            ]);
+
+            Log::create([
+                'id' => Uuid::uuid4(),
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama_karyawan,
+                'aksi' => 'CREATE',
+                'deskripsi' => 'Menambah BAPB baru ' . $request->no_bapb,
+                'id_menu' => null,
+                'nama_menu' => 'Barang Masuk HO',
+                'id_tabel_baru' => $kode,
+                'nama_tabel' => 'barang_masuk',
+                'id_tabel_lama' => null,
+                'keterangan' => 'success',
             ]);
 
             return response()->json([
@@ -72,18 +141,40 @@ class BarangMasukController extends Controller
                 $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
                 return $btn;
             })
-            ->rawColumns(['aksi'])
+            ->addColumn('ttd_karyawan', function ($row) {
+
+                if (!$row->ttd_karyawan) {
+                    return '-';
+                }
+
+                $signature = asset('storage/signatures/' . basename($row->ttd_karyawan));
+
+                return '<img src="' . $signature . '"
+                        style="
+                            max-width: 120px;
+                            max-height: 60px;
+                            width: auto;
+                            height: auto;
+                            object-fit: contain;
+                            display: block;
+                            margin: auto;
+                        ">';
+            })
+            ->rawColumns([
+                'aksi',
+                'ttd_karyawan'
+            ])
             ->make(true);
     }
     public function delete(Request $request)
     {
         try {
             $rules = [
-                'id_barang_masuk_delete' => 'required',
+                'id_bapb_delete' => 'required',
 
             ];
             $messages = [
-                'id_barang_masuk_delete.required' => 'Terjadi kesalahan',
+                'id_bapb_delete.required' => 'Terjadi kesalahan',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -93,7 +184,7 @@ class BarangMasukController extends Controller
                 ]);
             }
 
-            $menu = BarangMasuk::where('id', $request->id_barang_masuk_delete)->first();
+            $menu = BarangMasuk::where('id', $request->id_bapb_delete)->first();
 
             $menu->delete();
 
@@ -112,6 +203,7 @@ class BarangMasukController extends Controller
         try {
             $rules = [
                 'no_bapb' => 'required',
+                'ttd_karyawan' => 'nullable|string',
 
             ];
             $messages = [
@@ -124,10 +216,82 @@ class BarangMasukController extends Controller
                     'errors' => $validator->errors(),
                 ]);
             }
+            $user = Auth::user();
+            $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+            $area = Area::where('id', $karyawan->id_area)->first();
+            $proyek = Proyek::where('id', $user->id_proyek)->first();
+            $bapb_unik = BarangMasuk::where('no_bapb', $request->no_bapb)
+                ->where('id_proyek', $user->id_proyek)
+                ->where('id', '!=', $request->id_bapb_update)
+                ->exists();
+            // dd($bapb_unik);
+            if ($bapb_unik) {
+                Log::create([
+                    'id' => Uuid::uuid4(),
+                    'id_karyawan' => $karyawan->id,
+                    'nama_karyawan' => $karyawan->nama_karyawan,
+                    'aksi' => 'UPDATE',
+                    'deskripsi' => 'Tertolak karena tidak unik ' . $request->no_bapb,
+                    'id_menu' => null,
+                    'nama_menu' => 'Supplier',
+                    'id_tabel_baru' =>  $request->id_bapb_update,
+                    'nama_tabel' => 'barang_bapb',
+                    'id_tabel_lama' => null,
+                    'keterangan' => 'failed',
+                ]);
 
-            BarangMasuk::where('id', $request->id_barang_masuk_update)->update([
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No. BAPB sudah digunakan dalam proyek ini!'
+                ], 422);
+            }
+            // dd($karyawan);
+            $bapb = BarangMasuk::where('id', $request->id_bapb_update)->first();
+            if ($bapb->ttd_karyawan) {
+                $oldSignaturePath = 'signatures/' . basename($bapb->ttd_karyawan);
+                if (Storage::disk('public')->exists($oldSignaturePath)) {
+                    Storage::disk('public')->delete($oldSignaturePath);
+                }
+            }
+            $image = $request->signature;
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+
+            // nama file
+            $fileName = 'signature_' . time() . '.png';
+            // dd($fileName);
+            // simpan ke storage
+            Storage::disk('public')->put(
+                'signatures/' . $fileName,
+                base64_decode($image)
+            );
+
+            $bapb->update([
                 'no_bapb' => $request->no_bapb,
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama_karyawan,
+                'ttd_karyawan' => $fileName,
+
+                'id_area' => $area->id,
+                'nama_area' => $area->nama_area,
+
+                'id_proyek' => $proyek->id,
+                'nama_proyek' => $proyek->nama_proyek,
+                'created_at' => now(),
                 'updated_at' => now(),
+            ]);
+            Log::create([
+                'id' => Uuid::uuid4(),
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama_karyawan,
+                'aksi' => 'CREATE',
+                'deskripsi' => 'Mengupdate BAPB ' . $request->no_bapb,
+                'id_menu' => null,
+                'nama_menu' => 'Barang Masuk HO',
+                'id_tabel_baru' => $request->id_bapb_update,
+                'nama_tabel' => 'barang_masuk',
+                'id_tabel_lama' => null,
+                'keterangan' => 'success',
             ]);
 
             return response()->json([
