@@ -178,6 +178,14 @@
         box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
     }
 
+    .modal .select2-container {
+        z-index: 1060;
+    }
+
+    .modal .select2-dropdown {
+        z-index: 1065;
+    }
+
     table {
         border-collapse: separate;
         border-spacing: 0;

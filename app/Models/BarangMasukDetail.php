@@ -18,27 +18,24 @@ class BarangMasukDetail extends Model
     protected $fillable = [
         'id',
         'id_barang_masuk',
-        'kode_barang',
-
         'no_bapb',
-
         'tanggal_masuk',
         'surat_jalan',
+        'id_kategori',
+        'nama_kategori',
         'id_supplier',
         'nama_supplier',
         'id_barang',
+        'kode_barang',
         'nama_barang',
-        'foto_surat_jalan',
-
-        'jumlah',
         'satuan',
-        'status',
-
+        'foto_surat_jalan',
+        'jumlah',
+        'harga',
         'keterangan',
-
+        'status',
         'id_karyawan',
         'nama_karyawan',
-
         'created_at',
         'updated_at',
     ];

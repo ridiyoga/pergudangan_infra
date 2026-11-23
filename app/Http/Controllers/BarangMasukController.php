@@ -36,19 +36,19 @@ class BarangMasukController extends Controller
         try {
             $rules = [
                 'no_bapb' => 'required',
-                'signature' => [
-                    'required',
-                    'string',
-                    'regex:/\Adata:image\/png;base64,[A-Za-z0-9+\/]+={0,2}\z/',
-                ],
+                // 'signature' => [
+                //     'required',
+                //     'string',
+                //     'regex:/\Adata:image\/png;base64,[A-Za-z0-9+\/]+={0,2}\z/',
+                // ],
                 'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
                 'no_bapb.required' => 'No. BAPB wajib diisi',
-                'signature.required' => 'Tanda tangan wajib diisi',
-                'signature.string' => 'Format tanda tangan tidak valid',
-                'signature.regex' => 'Format tanda tangan tidak valid',
+                // 'signature.required' => 'Tanda tangan wajib diisi',
+                // 'signature.string' => 'Format tanda tangan tidak valid',
+                // 'signature.regex' => 'Format tanda tangan tidak valid',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -89,28 +89,28 @@ class BarangMasukController extends Controller
                 ], 422);
             }
             // dd($area);
-            $image = $request->signature;
-            $image = str_replace('data:image/png;base64,', '', $image);
-            $image = str_replace(' ', '+', $image);
+            // $image = $request->signature;
+            // $image = str_replace('data:image/png;base64,', '', $image);
+            // $image = str_replace(' ', '+', $image);
 
-            $fileName = 'signature_' . time() . '.png';
-            // dd($fileName);
-            // simpan ke storage
-            Storage::disk('public')->put(
-                'signatures/' . $fileName,
-                base64_decode($image)
-            );
+            // $fileName = 'signature_' . time() . '.png';
+            // // dd($fileName);
+            // // simpan ke storage
+            // Storage::disk('public')->put(
+            //     'signatures/' . $fileName,
+            //     base64_decode($image)
+            // );
             BarangMasuk::create([
                 'id' => $kode,
                 'no_bapb' => $request->no_bapb,
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
-                'ttd_karyawan' => $fileName,
+                // 'ttd_karyawan' => $fileName,
 
 
                 'id_atasan1' => $karyawan->id,
                 'nama_atasan1' => $karyawan->nama_karyawan,
-                'ttd_atasan1' => $fileName,
+                // 'ttd_atasan1' => $fileName,
                 'status_atasan1' => 1,
                 'waktu_atasan1' => now(),
 
@@ -149,6 +149,8 @@ class BarangMasukController extends Controller
     public function barang_masuk_dt($id)
     {
         $data = BarangMasuk::get();
+
+        // dd($id);
 
         return DataTables::of($data)
             ->addColumn('aksi', function ($row) use ($id) {

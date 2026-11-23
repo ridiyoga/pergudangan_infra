@@ -70,7 +70,7 @@
                             name="no_bapb">
                     </div>
                     <!-- Canvas Container dengan Dashed Border & Accent Color -->
-                    <div id="sig_add"
+                    {{-- <div id="sig_add"
                         class="signature-area kbw-signature rounded-4 position-relative overflow-hidden mb-2"
                         style="width: 100%; height: 210px; border: 2px dashed #93c5fd; background-color: #f8fafc;">
 
@@ -89,9 +89,9 @@
                             style="width:100%; height:100%; touch-action: none !important; position: relative; z-index: 2; cursor: crosshair;"
                             hidden></canvas>
                     </div>
-                    <input type="hidden" id="signature_add" name="signature">
+                    <input type="hidden" id="e" name="signature"> --}}
 
-                    <!-- Baris Kontrol Bawah -->
+                    {{-- <!-- Baris Kontrol Tanda Tangan Add -->
                     <div class="d-flex justify-content-between align-items-center px-1 mb-2">
                         <span class="text-muted small" style="font-size: 0.8rem;">
                             <i class="fa-regular fa-circle-check text-success me-1"></i>Gunakan mouse untuk tanda
@@ -102,7 +102,7 @@
                             <span class="mdi mdi-trash-can-outline"></span>
                             <span>Hapus</span>
                         </button>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
             <div class="modal-footer">
@@ -220,9 +220,9 @@
             })
         }
 
-        const createCanvas = $('#signature-pad-add')[0];
+        // const createCanvas = $('#signature-pad-add')[0];
         const updateCanvas = $('#signature-pad-update')[0];
-        const createSignaturePad = new SignaturePad(createCanvas);
+        // const createSignaturePad = new SignaturePad(createCanvas);
         const updateSignaturePad = new SignaturePad(updateCanvas);
 
         function resizeCanvas(canvas, signaturePad) {
@@ -251,22 +251,21 @@
             updateSignaturePad.clear();
             $('#modal_update_barang_masuk').modal('show');
         });
-        $(document).on('click', '#btn_tambah_barang_masuk', function() {
-            $('#signature-pad-add').removeAttr('hidden');
-            $('#signature_add').val('');
-            createSignaturePad.clear();
-            let id = $(this).data('id');
-            $('#id_tidak_masuk').val(id);
-        });
+        // $(document).on('click', '#btn_tambah_barang_masuk', function() {
+        //     $('#signature-pad-add').removeAttr('hidden');
+        //     $('#signature_add').val('');
+        //     createSignaturePad.clear();
+        //     let id = $(this).data('id');
+        //     $('#id_tidak_masuk').val(id);
+        // });
 
-        $('#modal_barang_masuk').on('shown.bs.modal', function() {
-            resizeCanvas(createCanvas, createSignaturePad);
-
-            console.log({
-                width: createCanvas.width,
-                height: createCanvas.height
-            });
-        });
+        // $('#modal_barang_masuk').on('shown.bs.modal', function() {
+        //     resizeCanvas(createCanvas, createSignaturePad);
+        //     console.log({
+        //         width: createCanvas.width,
+        //         height: createCanvas.height
+        //     });
+        // });
         $('#modal_update_barang_masuk').on('shown.bs.modal', function() {
             resizeCanvas(updateCanvas, updateSignaturePad);
 
@@ -278,30 +277,31 @@
 
 
         $(window).on('resize', function() {
-            if ($('#modal_barang_masuk').hasClass('show')) {
-                resizeCanvas(createCanvas, createSignaturePad);
-            }
+            // if ($('#modal_barang_masuk').hasClass('show')) {
+            //     resizeCanvas(createCanvas, createSignaturePad);
+            // }
             if ($('#modal_update_barang_masuk').hasClass('show')) {
                 resizeCanvas(updateCanvas, updateSignaturePad);
             }
         });
 
-        $('#clear_signature_add').on('click', function() {
-            createSignaturePad.clear();
-            $('#signature_add').val('');
-        });
+        // $('#clear_signature_add').on('click', function() {
+        //     createSignaturePad.clear();
+        //     $('#signature_add').val('');
+        // });
         $('#clear_signature_update').on('click', function() {
             updateSignaturePad.clear();
             $('#signature_update').val('');
         });
 
         // TTD Versi Web End
+        // var menu_id =
         const table = $('#tabel_barang_masuk').DataTable({
             processing: true,
             responsive: true,
             serverSide: true,
             ajax: {
-                url: "{{ url('/barang_masuk_dt') }}" + '/' + '{{ $menu_id }}',
+                url: "{{ url('/barang_masuk_dt/') }}" + '/' + "{{ $menu_id }}",
                 type: "GET"
             },
             columns: [{
@@ -338,9 +338,9 @@
         });
         $(document).on('click', '#btn_create_barang_masuk', function(e) {
             e.preventDefault();
-            $('#signature_add').val(
-                createSignaturePad.isEmpty() ? '' : createSignaturePad.toDataURL()
-            );
+            // $('#signature_add').val(
+            //     createSignaturePad.isEmpty() ? '' : createSignaturePad.toDataURL()
+            // );
 
             $.ajax({
                 url: "{{ url('/barang_masuk_create') }}",
@@ -375,7 +375,7 @@
                     });
 
                     $('#form_tambah_barang_masuk')[0].reset();
-                    createSignaturePad.clear();
+                    // createSignaturePad.clear();
                     $('#modal_barang_masuk').modal('hide');
 
                 },

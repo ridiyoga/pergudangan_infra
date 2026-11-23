@@ -107,6 +107,7 @@ Route::middleware('auth')->group(function () {
     // Barang Masuk Detail
     Route::get('/barang_masuk_detail/get_barang/{id_kategori}', [BarangMasukDetailController::class, 'get_barang'])->name('get_barang');
     Route::get('/barang_masuk_detail/{id}/{menu_id}', [BarangMasukDetailController::class, 'index'])->name('barang_masuk_detail');
+    Route::post('/barang_masuk_detail/selesai_ttd', [BarangMasukDetailController::class, 'selesai_ttd'])->name('barang_masuk_selesai');
     Route::post('/barang_masuk_detail_create', [BarangMasukDetailController::class, 'create'])->name('barang_masuk_detail_create');
     Route::get('/barang_masuk_detail_dt/{id}', [BarangMasukDetailController::class, 'barang_masuk_detail_dt'])->name('barang_masuk_detail_dt');
     Route::post('/barang_masuk_detail_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_detail_delete');
