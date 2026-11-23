@@ -922,7 +922,8 @@
                     }).then(() => {
                         table.ajax.reload(() => {
                             window.location.href =
-                                "{{ url('/barang_masuk') }}/" + data;
+                                "{{ url('/barang_masuk') }}/" +
+                                "{{ $menu_id }}";
                         });
                     });
 
