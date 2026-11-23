@@ -3,6 +3,7 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangKategoriController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\BarangMasukDetailController;
 use App\Http\Controllers\BarangSupplierController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
@@ -100,16 +101,18 @@ Route::middleware('auth')->group(function () {
     // Barang Masuk
     Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');
     Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
-    Route::get('/barang_masuk_dt', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
-    Route::post('/barang_masuk_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_delete');
+    Route::get('/barang_masuk_dt/{id}', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
     Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
 
-    // Barang Masuk
-    Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');
-    Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
-    Route::get('/barang_masuk_dt', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
-    Route::post('/barang_masuk_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_delete');
-    Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
+    // Barang Masuk Detail
+    Route::get('/barang_masuk_detail/get_barang/{id_kategori}', [BarangMasukDetailController::class, 'get_barang'])->name('get_barang');
+    Route::get('/barang_masuk_detail/{id}/{menu_id}', [BarangMasukDetailController::class, 'index'])->name('barang_masuk_detail');
+    Route::post('/barang_masuk_detail_create', [BarangMasukDetailController::class, 'create'])->name('barang_masuk_detail_create');
+    Route::get('/barang_masuk_detail_dt/{id}', [BarangMasukDetailController::class, 'barang_masuk_detail_dt'])->name('barang_masuk_detail_dt');
+    Route::post('/barang_masuk_detail_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_detail_delete');
+    Route::post('/barang_masuk_detail_delete', [BarangMasukDetailController::class, 'delete'])->name('barang_masuk_detail_delete');
+    Route::post('/barang_masuk_detail_update', [BarangMasukDetailController::class, 'update'])->name('barang_masuk_detail_update');
+
 
     // Master User
     Route::get('/log/{menu_id}', [MasterLogController::class, 'index'])->name('log');

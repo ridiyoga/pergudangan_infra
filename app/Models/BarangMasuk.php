@@ -29,24 +29,28 @@ class BarangMasuk extends Model
         'ttd_atasan1',
         'waktu_atasan1',
         'status_atasan1',
+        'alasan_ditolak1',
 
         'id_atasan2',
         'nama_atasan2',
         'ttd_atasan2',
         'waktu_atasan2',
         'status_atasan2',
+        'alasan_ditolak2',
 
         'id_atasan3',
         'nama_atasan3',
         'ttd_atasan3',
         'waktu_atasan3',
         'status_atasan3',
+        'alasan_ditolak3',
 
         'id_atasan4',
         'nama_atasan4',
         'ttd_atasan4',
         'waktu_atasan4',
         'status_atasan4',
+        'alasan_ditolak4',
 
         'status',
 

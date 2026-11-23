@@ -1,4 +1,8 @@
 <style>
+    main.flex-grow-1 {
+        min-width: 0;
+    }
+
     .sidebar {
         flex: 0 0 260px;
         width: 260px;

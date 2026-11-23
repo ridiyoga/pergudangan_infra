@@ -301,7 +301,7 @@
             responsive: true,
             serverSide: true,
             ajax: {
-                url: "{{ url('/barang_masuk_dt') }}",
+                url: "{{ url('/barang_masuk_dt') }}" + '/' + '{{ $menu_id }}',
                 type: "GET"
             },
             columns: [{
@@ -365,13 +365,18 @@
                         title: 'Sukses!',
                         text: 'Data Berhasil Disimpan',
                         icon: 'success'
+                    }).then(() => {
+                        table.ajax.reload(() => {
+                            window.location.href =
+                                "{{ url('/barang_masuk_detail') }}/" + data
+                                .id_bapb +
+                                "/{{ $menu_id }}";
+                        });
                     });
 
                     $('#form_tambah_barang_masuk')[0].reset();
                     createSignaturePad.clear();
                     $('#modal_barang_masuk').modal('hide');
-
-                    table.ajax.reload();
 
                 },
 
@@ -412,16 +417,19 @@
                         return;
                     }
 
+
+
+                    $('#form_delete_barang_masuk')[0].reset();
+                    $('#modal_delete_barang_masuk').modal('hide');
+
+                    table.ajax.reload();
+
                     Swal.fire({
                         title: 'Sukses!',
                         text: 'Data Berhasil Dihapus',
                         icon: 'success'
                     });
 
-                    $('#form_delete_barang_masuk')[0].reset();
-                    $('#modal_delete_barang_masuk').modal('hide');
-
-                    table.ajax.reload();
                 },
 
                 error: function(xhr) {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BarangMasukDetail extends Model
 {
-    protected $table = 'barang';
+    protected $table = 'barang_masuk_detail';
 
     protected $primaryKey = 'id';
 
@@ -18,18 +18,21 @@ class BarangMasukDetail extends Model
     protected $fillable = [
         'id',
         'id_barang_masuk',
+        'kode_barang',
 
         'no_bapb',
 
         'tanggal_masuk',
         'surat_jalan',
         'id_supplier',
-        'supplier',
+        'nama_supplier',
         'id_barang',
         'nama_barang',
+        'foto_surat_jalan',
 
         'jumlah',
         'satuan',
+        'status',
 
         'keterangan',
 

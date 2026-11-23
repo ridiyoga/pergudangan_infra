@@ -36,11 +36,19 @@ class BarangMasukController extends Controller
         try {
             $rules = [
                 'no_bapb' => 'required',
+                'signature' => [
+                    'required',
+                    'string',
+                    'regex:/\Adata:image\/png;base64,[A-Za-z0-9+\/]+={0,2}\z/',
+                ],
                 'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
                 'no_bapb.required' => 'No. BAPB wajib diisi',
+                'signature.required' => 'Tanda tangan wajib diisi',
+                'signature.string' => 'Format tanda tangan tidak valid',
+                'signature.regex' => 'Format tanda tangan tidak valid',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -99,6 +107,13 @@ class BarangMasukController extends Controller
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'ttd_karyawan' => $fileName,
 
+
+                'id_atasan1' => $karyawan->id,
+                'nama_atasan1' => $karyawan->nama_karyawan,
+                'ttd_atasan1' => $fileName,
+                'status_atasan1' => 1,
+                'waktu_atasan1' => now(),
+
                 'id_area' => $area->id,
                 'nama_area' => $area->nama_area,
 
@@ -124,25 +139,29 @@ class BarangMasukController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'No. BAPB berhasil disimpan',
+                'id_bapb' => $kode,
             ], 201);
         } catch (\Exception $e) {
 
             return $e->getMessage();
         }
     }
-    public function barang_masuk_dt()
+    public function barang_masuk_dt($id)
     {
         $data = BarangMasuk::get();
 
         return DataTables::of($data)
-            ->addColumn('aksi', function ($row) {
-                $action = '
-                            <button class="btn btn-warning m-1" id="btn_update_datatable"
+            ->addColumn('aksi', function ($row) use ($id) {
+                $see = '<a href="' . url("/barang_masuk_detail/{$row->id}/{$id}") . '"
+                            class="btn btn-info m-1"
+                            data-id="{$row->id}">
+                            <i class="bi bi-database-down"></i>
+                        </a>';
+                $update = $see . '<button class="btn btn-warning m-1" id="btn_update_datatable"
                                 data-id="' . $row->id . '"
                                 data-no_bapb="' . $row->no_bapb . '">
                                 <i class="bi bi-pencil"></i></button>';
-                $btn = $action . '<button id="btn_delete_datatable" class="btn btn-danger m-1" data-id="' . $row->id . '"><i class="bi bi-trash"></i></button>';
-                return $btn;
+                return $update;
             })
             ->addColumn('ttd_karyawan', function ($row) {
 
@@ -169,65 +188,26 @@ class BarangMasukController extends Controller
             ])
             ->make(true);
     }
-    public function delete(Request $request)
-    {
-        try {
-            $rules = [
-                'id_bapb_delete' => 'required',
-                'menu_id' => 'required|uuid|exists:master_menu,id',
 
-            ];
-            $messages = [
-                'id_bapb_delete.required' => 'Terjadi kesalahan',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return response()->json([
-                    'code' => 400,
-                    'errors' => $validator->errors(),
-                ]);
-            }
-
-            $bapb = BarangMasuk::where('id', $request->id_bapb_delete)->first();
-            $user = Auth::user();
-            $menu = Menu::where('id', $request->menu_id)->first();
-            $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
-            Log::create([
-                'id' => Uuid::uuid4(),
-                'id_karyawan' => $karyawan->id,
-                'nama_karyawan' => $karyawan->nama_karyawan,
-                'aksi' => 'DELETE',
-                'deskripsi' => 'Menghapus BAPB ' . $bapb->no_bapb,
-                'id_menu' => $menu->id,
-                'nama_menu' => $menu->nama_menu,
-                'nama_tabel' => 'barang_masuk',
-                'id_tabel_lama' => $bapb->id,
-                'keterangan' => 'success',
-            ]);
-
-            $bapb->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'No. BAPB berhasil disimpan',
-            ], 201);
-        } catch (\Exception $e) {
-
-            return $e->getMessage();
-        }
-    }
     public function update(Request $request)
     {
         // dd($request->all());
         try {
             $rules = [
                 'no_bapb' => 'required',
-                'ttd_karyawan' => 'nullable|string',
+                'signature' => [
+                    'required',
+                    'string',
+                    'regex:/\Adata:image\/png;base64,[A-Za-z0-9+\/]+={0,2}\z/',
+                ],
                 'menu_id' => 'required|uuid|exists:master_menu,id',
 
             ];
             $messages = [
                 'no_bapb.required' => 'No. BAPB wajib diisi',
+                'signature.required' => 'Tanda tangan wajib diisi',
+                'signature.string' => 'Format tanda tangan tidak valid',
+                'signature.regex' => 'Format tanda tangan tidak valid',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -291,6 +271,10 @@ class BarangMasukController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'ttd_karyawan' => $fileName,
+
+                'id_atasan1' => $karyawan->id,
+                'nama_atasan1' => $karyawan->nama_karyawan,
+                'ttd_atasan1' => $fileName,
 
                 'id_area' => $area->id,
                 'nama_area' => $area->nama_area,
