@@ -61,134 +61,142 @@
     </div>
 </main>
 {{-- Modal Create --}}
+
 <div class="modal fade" id="modal_barang" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tambah Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <form id="form_tambah_barang">
                     @csrf
                     <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <input type="hidden" name="id_barang_masuk" value="{{ $id_bapb }}">
-                    <div class="mb-2">
-                        <label for="no_bapb" class="form-label">No. BAPB</label>
-                        <input type="text" class="form-control" placeholder="No. BAPB" value="{{ $bapb->no_bapb }}"
-                            id="no_bapb_add" name="no_bapb" readonly>
-                    </div>
 
-                    <div class="mb-2">
-                        <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
-                        <input type="date" class="form-control" placeholder="Tanggal Masuk" id="tanggal_masuk_add"
-                            name="tanggal_masuk">
-                    </div>
-                    <div class="mb-2">
-                        <label for="surat_jalan" class="form-label">No. Surat Jalan</label>
-                        <input type="text" class="form-control" placeholder="No. Surat Jalan" id="surat_jalan_add"
-                            name="surat_jalan">
-                    </div>
-
-                    <div class="mb-2">
-                        <label for="id_kategori_add" class="form-label">Kategori</label>
-                        <select class="form-select" id="id_kategori_add" name="id_kategori">
-                            <option value=""></option>
-                            @foreach ($kategori as $kk)
-                                <option value="{{ $kk->id }}">{{ $kk->nama_kategori }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label for="id_barang_add" class="form-label">Nama Barang</label>
-                        <select class="form-select" id="id_barang_add" name="id_barang">
-                            <option value=""></option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label for="jumlah" class="form-label">Jumlah Barang</label>
-                        <input type="text" class="form-control" placeholder="Jumlah Barang" id="jumlah_add"
-                            name="jumlah">
-                    </div>
-                    <div class="mb-2">
-                        <label for="id_supplier_add" class="form-label">Supplier</label>
-                        <select class="form-select" id="id_supplier_add" name="id_supplier">
-                            <option value=""></option>
-                            @foreach ($supplier as $sp)
-                                <option value="{{ $sp->id }}">{{ $sp->nama_supplier }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label for="keterangan" class="form-label">Keterangan</label>
-                        <textarea type="text" class="form-control" placeholder="Keterangan" id="keterangan_add" name="keterangan"></textarea>
-                    </div>
-                    <div class="row g-2">
-                        <!-- Label Utama -->
-                        <label for="foto" class="form-label fw-bold text-dark mb-2">
-                            <i class="fa-solid fa-file-medical text-primary me-2"></i>Foto Terkini
-                        </label>
-
-                        <!-- Container Alert -->
-                        <div class="alert_pulang mb-2"></div>
-
-                        <!-- Upload Box -->
-                        <div
-                            class="file-upload-wrapper text-center p-4 rounded-3 border border-2 border-dashed bg-light position-relative overflow-hidden">
-
-                            <!-- Input File Overlay -->
-                            <input type="file" id="foto" name="foto"
-                                class="position-absolute top-0 start-0 w-100 h-100 opacity-0 z-3"
-                                accept="image/*,.pdf" style="cursor: pointer;" />
-
-                            <!-- Tampilan Default (Belum Ada File) -->
-                            <div class="file-upload-content" id="upload_default">
-                                <div class="icon-circle mb-3 mx-auto bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 60px; height: 60px;">
-                                    <i class="fa-solid fa-cloud-arrow-up fs-4 text-primary"></i>
-                                </div>
-                                <h6 class="fw-semibold text-dark mb-1">Foto Terkini</h6>
-                                <p class="text-muted small mb-0">Klik atau seret file ke area ini</p>
-                                <span class="badge bg-white text-secondary border mt-2 font-monospace">Format: JPG,
-                                    PNG,
-                                    PDF (Max 2MB)</span>
+                    <div class="row g-3">
+                        <!-- Kolom Kiri -->
+                        <div class="col-12 col-md-6">
+                            <div class="mb-2">
+                                <label for="no_bapb" class="form-label">No. BAPB</label>
+                                <input type="text" class="form-control" placeholder="No. BAPB"
+                                    value="{{ $bapb->no_bapb }}" id="no_bapb_add" name="no_bapb" readonly>
                             </div>
 
-                            <!-- Tampilan Sukses (Setelah File Dipilih) -->
-                            <div class="file-upload-content d-none" id="upload_success">
-                                <!-- Preview Gambar (Otomatis Tampil Jika Berupa Foto) -->
-                                <div class="mb-3 d-none" id="image_preview_container">
-                                    <img id="image_preview" src="" alt="Preview Foto"
-                                        class="img-thumbnail rounded" style="max-height: 150px; object-fit: cover;" />
-                                </div>
-
-                                <!-- Icon Default Jika File Adalah PDF -->
-                                <div id="pdf_icon_container"
-                                    class="icon-circle mb-3 mx-auto bg-success bg-opacity-10 text-success shadow-sm rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 60px; height: 60px;">
-                                    <i class="fa-solid fa-file-circle-check fs-3"></i>
-                                </div>
-
-                                <h6 class="fw-semibold text-dark mb-1 text-truncate px-3" id="file_name_display">
-                                    Nama_File.pdf</h6>
-                                <p class="text-muted small mb-2" id="file_size_display">0 KB</p>
-
-                                <span class="badge bg-success text-white mb-2">
-                                    <i class="fa-solid fa-check me-1"></i>File Berhasil Dipilih
-                                </span>
-
-                                <div>
-                                    <small class="text-primary text-decoration-underline fw-semibold">Klik area ini
-                                        untuk
-                                        mengganti file</small>
-                                </div>
+                            <div class="mb-2">
+                                <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
+                                <input type="date" class="form-control" id="tanggal_masuk_add" name="tanggal_masuk">
                             </div>
 
+                            <div class="mb-2">
+                                <label for="surat_jalan" class="form-label">No. Surat Jalan</label>
+                                <input type="text" class="form-control" placeholder="No. Surat Jalan"
+                                    id="surat_jalan_add" name="surat_jalan">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="id_kategori_add" class="form-label">Kategori</label>
+                                <select class="form-select" id="id_kategori_add" name="id_kategori">
+                                    <option value=""></option>
+                                    @foreach ($kategori as $kk)
+                                        <option value="{{ $kk->id }}">{{ $kk->nama_kategori }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="id_barang_add" class="form-label">Nama Barang</label>
+                                <select class="form-select" id="id_barang_add" name="id_barang">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan -->
+                        <div class="col-12 col-md-6">
+                            <div class="mb-2">
+                                <label for="jumlah" class="form-label">Jumlah Barang</label>
+                                <input type="text" class="form-control" placeholder="Jumlah Barang" id="jumlah_add"
+                                    name="jumlah">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="id_supplier_add" class="form-label">Supplier</label>
+                                <select class="form-select" id="id_supplier_add" name="id_supplier">
+                                    <option value=""></option>
+                                    @foreach ($supplier as $sp)
+                                        <option value="{{ $sp->id }}">{{ $sp->nama_supplier }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="keterangan" class="form-label">Keterangan</label>
+                                <textarea class="form-control" placeholder="Keterangan" id="keterangan_add" name="keterangan"></textarea>
+                            </div>
+
+                            <div class="row g-2">
+                                <label for="foto" class="form-label fw-bold text-dark mb-2">
+                                    <i class="fa-solid fa-file-medical text-primary me-2"></i>Foto Surat Jalan
+                                </label>
+
+                                <div class="alert_pulang mb-2"></div>
+
+                                <div
+                                    class="file-upload-wrapper text-center p-4 rounded-3 border border-2 border-dashed bg-light position-relative overflow-hidden">
+
+                                    <input type="file" id="foto" name="foto"
+                                        class="position-absolute top-0 start-0 w-100 h-100 opacity-0 z-3"
+                                        accept="image/*,.pdf" style="cursor: pointer;" />
+
+                                    <div class="file-upload-content" id="upload_default">
+                                        <div class="icon-circle mb-3 mx-auto bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fa-solid fa-cloud-arrow-up fs-4 text-primary"></i>
+                                        </div>
+                                        <h6 class="fw-semibold text-dark mb-1">Foto Surat Jalan</h6>
+                                        <p class="text-muted small mb-0">Klik atau seret file ke area ini</p>
+                                        <span class="badge bg-white text-secondary border mt-2 font-monospace">
+                                            Format: JPG, PNG, PDF (Max 2MB)
+                                        </span>
+                                    </div>
+
+                                    <div class="file-upload-content d-none" id="upload_success">
+                                        <div class="mb-3 d-none" id="image_preview_container">
+                                            <img id="image_preview" src="" alt="Preview Foto"
+                                                class="img-thumbnail rounded"
+                                                style="max-height: 150px; object-fit: cover;" />
+                                        </div>
+
+                                        <div id="pdf_icon_container"
+                                            class="icon-circle mb-3 mx-auto bg-success bg-opacity-10 text-success shadow-sm rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fa-solid fa-file-circle-check fs-3"></i>
+                                        </div>
+
+                                        <h6 class="fw-semibold text-dark mb-1 text-truncate px-3"
+                                            id="file_name_display">Nama_File.pdf</h6>
+                                        <p class="text-muted small mb-2" id="file_size_display">0 KB</p>
+
+                                        <span class="badge bg-success text-white mb-2">
+                                            <i class="fa-solid fa-check me-1"></i>File Berhasil Dipilih
+                                        </span>
+
+                                        <div>
+                                            <small class="text-primary text-decoration-underline fw-semibold">
+                                                Klik area ini untuk mengganti file
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-primary" id="btn_create_barang">Simpan</button>
@@ -196,6 +204,7 @@
         </div>
     </div>
 </div>
+
 {{-- Modal Delete --}}
 <div class="modal fade" id="modal_delete_barang" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -224,133 +233,165 @@
     </div>
 </div>
 {{-- Modal Update --}}
+
 <div class="modal fade" id="modal_update_barang" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tambah Barang</h5>
+                <h5 class="modal-title">Update Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <form id="form_update_barang">
                     @csrf
                     <input type="hidden" name="menu_id" value="{{ $menu_id }}">
                     <input type="hidden" id="id_barang_masuk_detail_update" name="id_barang_masuk_detail">
-                    <div class="mb-2">
-                        <label for="no_bapb" class="form-label">No. BAPB</label>
-                        <input type="text" class="form-control" placeholder="No. BAPB"
-                            value="{{ $bapb->no_bapb }}" id="no_bapb_add" name="no_bapb" disabled>
-                    </div>
 
-                    <div class="mb-2">
-                        <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
-                        <input type="date" class="form-control" placeholder="Tanggal Masuk"
-                            id="tanggal_masuk_update" name="tanggal_masuk">
-                    </div>
-                    <div class="mb-2">
-                        <label for="surat_jalan" class="form-label">No. Surat Jalan</label>
-                        <input type="text" class="form-control" placeholder="No. Surat Jalan"
-                            id="surat_jalan_update" name="surat_jalan">
-                    </div>
+                    <div class="row g-3">
 
-                    <div class="mb-2">
-                        <label for="kategori" class="form-label">Kategori</label>
-                        <input type="text" class="form-control" placeholder="Kategori" id="kategori_update"
-                            name="kategori" disabled>
-                    </div>
-                    <div class="mb-2">
-                        <label for="nama_barang" class="form-label">Nama Barang</label>
-                        <input type="text" class="form-control" placeholder="Nama Barang" id="nama_barang_update"
-                            name="nama_barang" disabled>
-                    </div>
-                    <div class="mb-2">
-                        <label for="jumlah" class="form-label">Jumlah Barang</label>
-                        <input type="text" class="form-control" placeholder="Jumlah Barang" id="jumlah_update"
-                            name="jumlah">
-                    </div>
-                    <div class="mb-2">
-                        <label for="supplier" class="form-label">Supplier</label>
-                        <input type="text" class="form-control" placeholder="Supplier Barang"
-                            id="supplier_update" name="supplier" disabled>
-                    </div>
-                    <div class="mb-2">
-                        <label for="keterangan" class="form-label">Keterangan</label>
-                        <textarea type="text" class="form-control" placeholder="Keterangan" id="keterangan_update" name="keterangan"></textarea>
-                    </div>
-                    <div class="row g-2">
-                        <!-- Label Utama -->
-                        <label for="foto_update" class="form-label fw-bold text-dark mb-2">
-                            <i class="fa-solid fa-file-medical text-primary me-2"></i>Foto Terkini
-                        </label>
-
-                        <!-- Container Alert -->
-                        <div class="alert_pulang mb-2"></div>
-
-                        <!-- Upload Box -->
-                        <div
-                            class="file-upload-wrapper text-center p-4 rounded-3 border border-2 border-dashed bg-light position-relative overflow-hidden">
-
-                            <!-- Input File Overlay -->
-                            <input type="file" id="foto_update" name="foto"
-                                class="position-absolute top-0 start-0 w-100 h-100 opacity-0 z-3"
-                                accept="image/*,.pdf" style="cursor: pointer;" />
-
-                            <!-- Tampilan Default (Belum Ada File) -->
-                            <div class="file-upload-content" id="upload_default_update">
-                                <div class="icon-circle mb-3 mx-auto bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 60px; height: 60px;">
-                                    <i class="fa-solid fa-cloud-arrow-up fs-4 text-primary"></i>
-                                </div>
-                                <h6 class="fw-semibold text-dark mb-1">Foto Terkini</h6>
-                                <p class="text-muted small mb-0">Klik atau seret file ke area ini</p>
-                                <span class="badge bg-white text-secondary border mt-2 font-monospace">Format: JPG,
-                                    PNG,
-                                    PDF (Max 2MB)</span>
+                        <!-- Kolom Kiri -->
+                        <div class="col-12 col-md-6">
+                            <div class="mb-2">
+                                <label for="no_bapb_update" class="form-label">No. BAPB</label>
+                                <input type="text" class="form-control" placeholder="No. BAPB"
+                                    value="{{ $bapb->no_bapb }}" id="no_bapb_update" name="no_bapb" disabled>
                             </div>
 
-                            <!-- Tampilan Sukses (Setelah File Dipilih) -->
-                            <div class="file-upload-content d-none" id="upload_success_update">
-                                <!-- Preview Gambar (Otomatis Tampil Jika Berupa Foto) -->
-                                <div class="mb-3 d-none" id="image_preview_container_update">
-                                    <img id="image_preview_update" src="" alt="Preview Foto"
-                                        class="img-thumbnail rounded" style="max-height: 150px; object-fit: cover;" />
-                                </div>
-
-                                <!-- Icon Default Jika File Adalah PDF -->
-                                <div id="pdf_icon_container_update"
-                                    class="icon-circle mb-3 mx-auto bg-success bg-opacity-10 text-success shadow-sm rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 60px; height: 60px;">
-                                    <i class="fa-solid fa-file-circle-check fs-3"></i>
-                                </div>
-
-                                <h6 class="fw-semibold text-dark mb-1 text-truncate px-3"
-                                    id="file_name_display_update">
-                                    Nama_File.pdf</h6>
-                                <p class="text-muted small mb-2" id="file_size_display_update">0 KB</p>
-
-                                <span class="badge bg-success text-white mb-2">
-                                    <i class="fa-solid fa-check me-1"></i>File Berhasil Dipilih
-                                </span>
-
-                                <div>
-                                    <small class="text-primary text-decoration-underline fw-semibold">Klik area ini
-                                        untuk
-                                        mengganti file</small>
-                                </div>
+                            <div class="mb-2">
+                                <label for="tanggal_masuk_update" class="form-label">Tanggal Masuk</label>
+                                <input type="date" class="form-control" id="tanggal_masuk_update"
+                                    name="tanggal_masuk">
                             </div>
 
+                            <div class="mb-2">
+                                <label for="surat_jalan_update" class="form-label">No. Surat Jalan</label>
+                                <input type="text" class="form-control" placeholder="No. Surat Jalan"
+                                    id="surat_jalan_update" name="surat_jalan">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="kategori_update" class="form-label">Kategori</label>
+                                <input type="text" class="form-control" placeholder="Kategori"
+                                    id="kategori_update" name="kategori" disabled>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="nama_barang_update" class="form-label">Nama Barang</label>
+                                <input type="text" class="form-control" placeholder="Nama Barang"
+                                    id="nama_barang_update" name="nama_barang" disabled>
+                            </div>
                         </div>
-                    </div>
 
+                        <!-- Kolom Kanan -->
+                        <div class="col-12 col-md-6">
+                            <div class="mb-2">
+                                <label for="jumlah_update" class="form-label">Jumlah Barang</label>
+                                <input type="text" class="form-control" placeholder="Jumlah Barang"
+                                    id="jumlah_update" name="jumlah">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="supplier_update" class="form-label">Supplier</label>
+                                <input type="text" class="form-control" placeholder="Supplier Barang"
+                                    id="supplier_update" name="supplier" disabled>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="keterangan_update" class="form-label">Keterangan</label>
+                                <textarea class="form-control" placeholder="Keterangan" id="keterangan_update" name="keterangan"></textarea>
+                            </div>
+
+                            <!-- Foto Surat Jalan -->
+                            <div class="row g-2">
+                                <label for="foto_update" class="form-label fw-bold text-dark mb-2">
+                                    <i class="fa-solid fa-file-medical text-primary me-2"></i>Foto Surat Jalan
+                                </label>
+
+                                <div class="alert_pulang mb-2"></div>
+
+                                <div
+                                    class="file-upload-wrapper text-center p-4 rounded-3 border border-2 border-dashed bg-light position-relative overflow-hidden">
+
+                                    <!-- Input File Overlay -->
+                                    <input type="file" id="foto_update" name="foto"
+                                        class="position-absolute top-0 start-0 w-100 h-100 opacity-0 z-3"
+                                        accept="image/*,.pdf" style="cursor: pointer;" />
+
+                                    <!-- Tampilan Default -->
+                                    <div class="file-upload-content" id="upload_default_update">
+                                        <div class="icon-circle mb-3 mx-auto bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fa-solid fa-cloud-arrow-up fs-4 text-primary"></i>
+                                        </div>
+
+                                        <h6 class="fw-semibold text-dark mb-1">Foto Surat Jalan</h6>
+                                        <p class="text-muted small mb-0">
+                                            Klik atau seret file ke area ini
+                                        </p>
+
+                                        <span class="badge bg-white text-secondary border mt-2 font-monospace">
+                                            Format: JPG, PNG, PDF (Max 2MB)
+                                        </span>
+                                    </div>
+
+                                    <!-- Tampilan Sukses -->
+                                    <div class="file-upload-content d-none" id="upload_success_update">
+
+                                        <!-- Preview Gambar -->
+                                        <div class="mb-3 d-none" id="image_preview_container_update">
+                                            <img id="image_preview_update" src="" alt="Preview Foto"
+                                                class="img-thumbnail rounded"
+                                                style="max-height: 150px; object-fit: cover;" />
+                                        </div>
+
+                                        <!-- Icon PDF -->
+                                        <div id="pdf_icon_container_update"
+                                            class="icon-circle mb-3 mx-auto bg-success bg-opacity-10 text-success shadow-sm rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fa-solid fa-file-circle-check fs-3"></i>
+                                        </div>
+
+                                        <h6 class="fw-semibold text-dark mb-1 text-truncate px-3"
+                                            id="file_name_display_update">
+                                            Nama_File.pdf
+                                        </h6>
+
+                                        <p class="text-muted small mb-2" id="file_size_display_update">
+                                            0 KB
+                                        </p>
+
+                                        <span class="badge bg-success text-white mb-2">
+                                            <i class="fa-solid fa-check me-1"></i>File Berhasil Dipilih
+                                        </span>
+
+                                        <div>
+                                            <small class="text-primary text-decoration-underline fw-semibold">
+                                                Klik area ini untuk mengganti file
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </form>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="btn_update_barang">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Batal
+                </button>
+                <button type="button" class="btn btn-primary" id="btn_update_barang">
+                    Simpan
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 {{-- Modal TTD --}}
 <div class="modal fade" id="modal_ttd" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">

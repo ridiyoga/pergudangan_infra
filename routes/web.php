@@ -4,6 +4,10 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangKategoriController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangMasukDetailController;
+use App\Http\Controllers\BarangMasukDetailKeuanganController;
+use App\Http\Controllers\BarangMasukDetailKomersialController;
+use App\Http\Controllers\BarangMasukKeuanganController;
+use App\Http\Controllers\BarangMasukKomersialController;
 use App\Http\Controllers\BarangSupplierController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
@@ -102,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/barang_masuk/{menu_id}', [BarangMasukController::class, 'index'])->name('barang_masuk');
     Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
     Route::get('/barang_masuk_dt/{id}', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
+    Route::get('/barang_masuk_dt2/{id}', [BarangMasukController::class, 'barang_masuk_dt2'])->name('barang_masuk_dt2');
     Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
 
     // Barang Masuk Detail
@@ -110,9 +115,30 @@ Route::middleware('auth')->group(function () {
     Route::post('/barang_masuk_detail/selesai_ttd', [BarangMasukDetailController::class, 'selesai_ttd'])->name('barang_masuk_selesai');
     Route::post('/barang_masuk_detail_create', [BarangMasukDetailController::class, 'create'])->name('barang_masuk_detail_create');
     Route::get('/barang_masuk_detail_dt/{id}', [BarangMasukDetailController::class, 'barang_masuk_detail_dt'])->name('barang_masuk_detail_dt');
-    Route::post('/barang_masuk_detail_delete', [BarangMasukController::class, 'delete'])->name('barang_masuk_detail_delete');
     Route::post('/barang_masuk_detail_delete', [BarangMasukDetailController::class, 'delete'])->name('barang_masuk_detail_delete');
     Route::post('/barang_masuk_detail_update', [BarangMasukDetailController::class, 'update'])->name('barang_masuk_detail_update');
+
+    // Barang Masuk Komersial
+    Route::get('/barang_masuk_komersial/{menu_id}', [BarangMasukKomersialController::class, 'index'])->name('barang_masuk_komersial');
+    Route::get('/barang_masuk_komersial_dt/{id}', [BarangMasukKomersialController::class, 'barang_masuk_komersial_dt'])->name('barang_masuk_komersial_dt');
+    Route::get('/barang_masuk_komersial_dt2/{id}', [BarangMasukKomersialController::class, 'barang_masuk_komersial_dt2'])->name('barang_masuk_komersial_dt2');
+
+    // Barang Masuk Komersial Detail
+    Route::get('/barang_masuk_komersial_detail/{id}/{menu_id}', [BarangMasukDetailKomersialController::class, 'index'])->name('barang_masuk_komersial_detail');
+    Route::post('/barang_masuk_komersial_detail/selesai_ttd', [BarangMasukDetailKomersialController::class, 'selesai_ttd'])->name('barang_masuk_komersial_selesai');
+    Route::get('/barang_masuk_komersial_detail_dt/{id}', [BarangMasukDetailKomersialController::class, 'barang_masuk_komersial_detail_dt'])->name('barang_masuk_komersial_detail_dt');
+    Route::post('/barang_masuk_komersial_detail_update', [BarangMasukDetailKomersialController::class, 'update'])->name('barang_masuk_komersial_detail_update');
+
+    // Barang Masuk Keuangan
+    Route::get('/barang_masuk_keuangan/{menu_id}', [BarangMasukKeuanganController::class, 'index'])->name('barang_masuk_keuangan');
+    Route::get('/barang_masuk_keuangan_dt/{id}', [BarangMasukKeuanganController::class, 'barang_masuk_keuangan_dt'])->name('barang_masuk_keuangan_dt');
+    Route::get('/barang_masuk_keuangan_dt2/{id}', [BarangMasukKeuanganController::class, 'barang_masuk_keuangan_dt2'])->name('barang_masuk_keuangan_dt2');
+
+    // Barang Masuk Keuangan Detail
+    Route::get('/barang_masuk_keuangan_detail/{id}/{menu_id}', [BarangMasukDetailKeuanganController::class, 'index'])->name('barang_masuk_keuangan_detail');
+    Route::post('/barang_masuk_keuangan_detail/selesai_ttd', [BarangMasukDetailKeuanganController::class, 'selesai_ttd'])->name('barang_masuk_keuangan_selesai');
+    Route::get('/barang_masuk_keuangan_detail_dt/{id}', [BarangMasukDetailKeuanganController::class, 'barang_masuk_keuangan_detail_dt'])->name('barang_masuk_keuangan_detail_dt');
+    Route::post('/barang_masuk_keuangan_detail_update', [BarangMasukDetailKeuanganController::class, 'update'])->name('barang_masuk_keuangan_detail_update');
 
 
     // Master User

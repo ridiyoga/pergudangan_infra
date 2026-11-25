@@ -240,6 +240,16 @@ class BarangMasukDetailController extends Controller
 
             // dd($karyawan);
             $bapb = BarangMasuk::where('id', $request->id_bapb)->first();
+            $detail = BarangMasukDetail::where('id_barang_masuk', $request->id_bapb)
+                ->doesntExist();
+            // dd($detail);
+
+            if ($detail) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Barang masuk masih belum diisi!'
+                ], 402);
+            }
             if ($bapb->ttd_karyawan) {
                 $oldSignaturePath = 'signatures/' . basename($bapb->ttd_karyawan);
                 if (Storage::disk('public')->exists($oldSignaturePath)) {
@@ -340,7 +350,7 @@ class BarangMasukDetailController extends Controller
                 'deskripsi' => 'Menghapus barang masuk ' . $barang_masuk->no_barang_masuk,
                 'id_menu' => $menu->id,
                 'nama_menu' => $menu->nama_menu,
-                'nama_tabel' => 'barang_masuk',
+                'nama_tabel' => 'barang_masuk_detail',
                 'id_tabel_lama' => $barang_masuk->id,
                 'keterangan' => 'success',
             ]);
