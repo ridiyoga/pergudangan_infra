@@ -38,7 +38,7 @@ class BarangMasukDetailKomersialController extends Controller
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('gudang/barang_masuk_komersial/detail', compact(
+        return view('komersial/barang_masuk_komersial/detail', compact(
             'parent',
             'menu_id',
             'id_bapb',
@@ -202,7 +202,7 @@ class BarangMasukDetailKomersialController extends Controller
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
-                'deskripsi' => 'Selesai memberikan harga pada BAPB ' . $request->no_bapb,
+                'deskripsi' => 'Selesai memberikan harga pada BAPB ' . $bapb->no_bapb,
                 'id_menu' => $menu->id,
                 'nama_menu' => $menu->nama_menu,
                 'nama_tabel' => 'barang_masuk',

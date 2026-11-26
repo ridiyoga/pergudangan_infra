@@ -33,7 +33,7 @@
     <h3 class="h3 mb-0">Barang Masuk (Keuangan)</h3>
     <div class="my-3">
         <div class="shadow mb-2 p-2 p-sm-3 table-responsive bg-white">
-            @if ($bapb->status == 1 || $bapb->status == 2)
+            @if ($bapb->status == 2 || $bapb->status == 3)
                 <button id="btn_tambah_ttd" type="button" class="btn btn-danger my-3"><i
                         class="bi bi-check-all"></i>&nbsp;Selesai</button>
             @endif
@@ -52,7 +52,6 @@
                         <th>KETERANGAN</th>
                         <th>PENGINPUT</th>
                         <th>FOTO SURAT JALAN</th>
-                        <th>AKSI</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -400,12 +399,6 @@
                     data: "foto_surat_jalan",
                     name: "foto_surat_jalan"
                 },
-                {
-                    data: "aksi",
-                    name: "aksi",
-                    orderable: false,
-                    searchable: false
-                },
             ],
             order: [
                 [1, 'asc']
@@ -425,7 +418,7 @@
             const formData = new FormData($('#form_update_barang')[0]);
 
             $.ajax({
-                url: "{{ url('/barang_masuk_komersial_detail_update') }}",
+                url: "{{ url('/barang_masuk_keuangan_detail_update') }}",
                 type: "POST",
                 data: formData,
                 dataType: 'json',
@@ -492,7 +485,7 @@
             );
 
             $.ajax({
-                url: "{{ url('/barang_masuk_komersial_detail/selesai_ttd') }}",
+                url: "{{ url('/barang_masuk_keuangan_detail/selesai_ttd') }}",
                 type: "POST",
                 data: $('#form_tambah_barang_masuk').serialize(),
                 dataType: 'json',
@@ -517,7 +510,7 @@
                     }).then(() => {
                         table.ajax.reload(() => {
                             window.location.href =
-                                "{{ url('/barang_masuk_komersial') }}/" +
+                                "{{ url('/barang_masuk_keuangan') }}/" +
                                 "{{ $menu_id }}";
                         });
                     });

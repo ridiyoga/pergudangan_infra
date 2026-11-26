@@ -87,14 +87,16 @@
 
                             <div class="mb-2">
                                 <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
-                                <input type="date" class="form-control" id="tanggal_masuk_add" name="tanggal_masuk">
+                                <input type="date" class="form-control" id="tanggal_masuk_add" name="tanggal_masuk"
+                                    value="{{ $bapb->tanggal_masuk }}" readonly>
                             </div>
-
                             <div class="mb-2">
                                 <label for="surat_jalan" class="form-label">No. Surat Jalan</label>
                                 <input type="text" class="form-control" placeholder="No. Surat Jalan"
                                     id="surat_jalan_add" name="surat_jalan">
                             </div>
+
+
 
                             <div class="mb-2">
                                 <label for="id_kategori_add" class="form-label">Kategori</label>
@@ -121,17 +123,13 @@
                                 <input type="text" class="form-control" placeholder="Jumlah Barang" id="jumlah_add"
                                     name="jumlah">
                             </div>
-
+                            <input type="hidden" id="id_supplier_add" name="id_supplier"
+                                value="{{ $bapb->id_supplier }}">
                             <div class="mb-2">
-                                <label for="id_supplier_add" class="form-label">Supplier</label>
-                                <select class="form-select" id="id_supplier_add" name="id_supplier">
-                                    <option value=""></option>
-                                    @foreach ($supplier as $sp)
-                                        <option value="{{ $sp->id }}">{{ $sp->nama_supplier }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="surat_jalan" class="form-label">Supplier</label>
+                                <input type="text" class="form-control" placeholder="Supplier" id="surat_jalan_add"
+                                    value="{{ $bapb->nama_supplier }}"name="surat_jalan" disabled>
                             </div>
-
                             <div class="mb-2">
                                 <label for="keterangan" class="form-label">Keterangan</label>
                                 <textarea class="form-control" placeholder="Keterangan" id="keterangan_add" name="keterangan"></textarea>
@@ -261,7 +259,7 @@
                             <div class="mb-2">
                                 <label for="tanggal_masuk_update" class="form-label">Tanggal Masuk</label>
                                 <input type="date" class="form-control" id="tanggal_masuk_update"
-                                    name="tanggal_masuk">
+                                    name="tanggal_masuk" disabled>
                             </div>
 
                             <div class="mb-2">
@@ -526,14 +524,14 @@
             allowClear: true
         });
         // $('#modal_barang').on('shown.bs.modal', function() {
-        if (!$('#id_supplier_add').hasClass('select2-hidden-accessible')) {
-            $('#id_supplier_add').select2({
-                dropdownParent: $('#modal_barang'),
-                width: '100%',
-                placeholder: 'Pilih Supplier',
-                allowClear: true
-            });
-        }
+        // if (!$('#id_supplier_add').hasClass('select2-hidden-accessible')) {
+        //     $('#id_supplier_add').select2({
+        //         dropdownParent: $('#modal_barang'),
+        //         width: '100%',
+        //         placeholder: 'Pilih Supplier',
+        //         allowClear: true
+        //     });
+        // }
 
         //     $('#id_supplier_add').select2('close');
         // });

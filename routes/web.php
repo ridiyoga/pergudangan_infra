@@ -107,6 +107,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/barang_masuk_create', [BarangMasukController::class, 'create'])->name('barang_masuk_create');
     Route::get('/barang_masuk_dt/{id}', [BarangMasukController::class, 'barang_masuk_dt'])->name('barang_masuk_dt');
     Route::get('/barang_masuk_dt2/{id}', [BarangMasukController::class, 'barang_masuk_dt2'])->name('barang_masuk_dt2');
+    Route::get('/barang_masuk_dt3/{id}', [BarangMasukController::class, 'barang_masuk_dt3'])->name('barang_masuk_dt3');
     Route::post('/barang_masuk_update', [BarangMasukController::class, 'update'])->name('barang_masuk_update');
 
     // Barang Masuk Detail
@@ -133,12 +134,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/barang_masuk_keuangan/{menu_id}', [BarangMasukKeuanganController::class, 'index'])->name('barang_masuk_keuangan');
     Route::get('/barang_masuk_keuangan_dt/{id}', [BarangMasukKeuanganController::class, 'barang_masuk_keuangan_dt'])->name('barang_masuk_keuangan_dt');
     Route::get('/barang_masuk_keuangan_dt2/{id}', [BarangMasukKeuanganController::class, 'barang_masuk_keuangan_dt2'])->name('barang_masuk_keuangan_dt2');
+    Route::get('/keuangan_cetak_pdf/{id}', [BarangMasukKeuanganController::class, 'keuangan_cetak_pdf'])->name('keuangan_cetak_pdf');
 
     // Barang Masuk Keuangan Detail
     Route::get('/barang_masuk_keuangan_detail/{id}/{menu_id}', [BarangMasukDetailKeuanganController::class, 'index'])->name('barang_masuk_keuangan_detail');
     Route::post('/barang_masuk_keuangan_detail/selesai_ttd', [BarangMasukDetailKeuanganController::class, 'selesai_ttd'])->name('barang_masuk_keuangan_selesai');
     Route::get('/barang_masuk_keuangan_detail_dt/{id}', [BarangMasukDetailKeuanganController::class, 'barang_masuk_keuangan_detail_dt'])->name('barang_masuk_keuangan_detail_dt');
     Route::post('/barang_masuk_keuangan_detail_update', [BarangMasukDetailKeuanganController::class, 'update'])->name('barang_masuk_keuangan_detail_update');
+
+
+    // Route::get('/laporan_gudang_masuk/{menu_id}', [BarangMasukKeuanganController::class, 'index'])->name('laporan_gudang_masuk');
+    // // // Route::get('/laporan_gudang_masuk_dt/{id}', [BarangMasukKeuanganController::class, 'laporan_gudang_masuk_dt'])->name('laporan_gudang_masuk_dt');
 
 
     // Master User

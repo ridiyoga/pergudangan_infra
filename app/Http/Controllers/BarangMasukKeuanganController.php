@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangMasukKeuanganController extends Controller
 {
@@ -30,12 +31,12 @@ class BarangMasukKeuanganController extends Controller
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('gudang/barang_masuk_keuangan/index', compact('parent', 'menu_id'));
+        return view('keuangan/barang_masuk_keuangan/index', compact('parent', 'menu_id'));
     }
     public function barang_masuk_keuangan_dt($id)
     {
         $user = Auth::user();
-        $data = BarangMasuk::where('status', 1)->where('id_proyek', $user->id_proyek)->get();
+        $data = BarangMasuk::where('status', 2)->where('id_proyek', $user->id_proyek)->get();
         // dd($id);
 
         return DataTables::of($data)
@@ -49,43 +50,31 @@ class BarangMasukKeuanganController extends Controller
             })
             ->addColumn('status', function ($row) use ($id) {
 
-                return '<span class="badge bg-success p-2">DISETUJUI KEPALA GUDANG</span>';
-            })
-
-            ->addColumn('ttd_karyawan', function ($row) {
-
-                if (!$row->ttd_karyawan) {
-                    return '-';
+                if ($row->status == 3) {
+                    return '<span class="badge bg-success p-2">DITANDATANGANI KEUANGAN</span>';
+                } else {
+                    return '<span class="badge bg-secondary p-2">BELUM DITANDATANGANI</span>';
                 }
-
-                $signature = asset('storage/signatures/' . basename($row->ttd_karyawan));
-
-                return '<img src="' . $signature . '"
-                        style="
-                            max-width: 120px;
-                            max-height: 60px;
-                            width: auto;
-                            height: auto;
-                            object-fit: contain;
-                            display: block;
-                            margin: auto;
-                        ">';
             })
+
             ->rawColumns([
                 'aksi',
-                'ttd_karyawan',
                 'status',
                 'harga',
             ])
             ->make(true);
     }
-    public function barang_masuk_keuangan_dt2($id)
+    public function barang_masuk_keuangan_dt2(Request $request, $id)
     {
         // dd($request->all());
+        $start = Carbon::parse($request->start_date)->format('Y-m-d');
+        $end = Carbon::parse($request->end_date)->format('Y-m-d');
+
 
         $user = Auth::user();
-        $data = BarangMasuk::where('status', 2)
+        $data = BarangMasuk::where('status', 3)
             ->where('id_proyek', $user->id_proyek)
+            ->whereBetween('tanggal_masuk', array($start, $end))
             ->get();
         // dd($id);
 
@@ -96,40 +85,26 @@ class BarangMasukKeuanganController extends Controller
                             data-id="{$row->id}">
                             <i class="bi bi-database-down"></i>
                         </a>';
-                return $see;
+                $action = $see . '<a href="' . url("/keuangan_cetak_pdf/{$row->id}/") . '"
+                            class="btn btn-danger m-1"
+                            data-id="{$row->id}">
+                           PDF
+                        </a>';
+                return $action;
             })
             ->addColumn('status', function ($row) use ($id) {
-                if ($row->status == 2) {
+                if ($row->status == 3) {
                     return '<span class="badge bg-success p-2">DITANDATANGANI KEUANGAN</span>';
                 } else {
                     return '<span class="badge bg-secondary p-2">BELUM DITANDATANGANI</span>';
                 }
-            })
-            ->addColumn('ttd_karyawan', function ($row) {
+            })->addColumn('ttd_atasan3', function ($row) {
 
-                if (!$row->ttd_karyawan) {
+                if (!$row->ttd_atasan3) {
                     return '-';
                 }
 
-                $signature = asset('storage/signatures/' . basename($row->ttd_karyawan));
-
-                return '<img src="' . $signature . '"
-                        style="
-                            max-width: 120px;
-                            max-height: 60px;
-                            width: auto;
-                            height: auto;
-                            object-fit: contain;
-                            display: block;
-                            margin: auto;
-                        ">';
-            })->addColumn('ttd_atasan2', function ($row) {
-
-                if (!$row->ttd_atasan2) {
-                    return '-';
-                }
-
-                $signature = asset('storage/signatures/' . basename($row->ttd_atasan2));
+                $signature = asset('storage/signatures/' . basename($row->ttd_atasan3));
 
                 return '<img src="' . $signature . '"
                         style="
@@ -142,17 +117,17 @@ class BarangMasukKeuanganController extends Controller
                             margin: auto;
                         ">';
             })
-            ->addColumn('waktu_atasan2', function ($row) use ($id) {
-                $waktu_atasan2 = Carbon::parse($row->waktu_atasan2)->format('d-m-Y H:i:s');
-                return $waktu_atasan2;
+            ->addColumn('waktu_atasan3', function ($row) use ($id) {
+                $waktu_atasan3 = Carbon::parse($row->waktu_atasan3)->format('d-m-Y H:i:s');
+                return $waktu_atasan3;
             })
 
             ->rawColumns([
                 'aksi',
                 'status',
                 'ttd_karyawan',
-                'ttd_atasan2',
-                'waktu_atasan2',
+                'ttd_atasan3',
+                'waktu_atasan3',
             ])
             ->make(true);
     }
@@ -272,5 +247,22 @@ class BarangMasukKeuanganController extends Controller
 
             return $e->getMessage();
         }
+    }
+    public function keuangan_cetak_pdf($id)
+    {
+        $user = Auth::user();
+        $karyawan = Karyawan::where('id', $user->id_karyawan)->first();
+        $bapb = BarangMasuk::where('id', $id)->first();
+        $proyek = Proyek::where('id', $user->id_proyek)->first();
+        $pdf = Pdf::loadView('keuangan.barang_masuk_keuangan.cetak_pdf', [
+            'user' => $user,
+            'karyawan' => $karyawan,
+            'bapb' => $bapb,
+            'proyek' => $proyek,
+        ]);
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream('laporan_barang_masuk.pdf');
     }
 }

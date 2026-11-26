@@ -59,6 +59,8 @@
                             <tr>
                                 <th>NO.</th>
                                 <th>No. BAPB</th>
+                                <th>TANGGAL MASUK</th>
+                                <th>SUPPLIER</th>
                                 <th>PENGINPUT / PENGEDIT</th>
                                 <th>STATUS</th>
                                 <th>TANDA TANGAN</th>
@@ -71,18 +73,38 @@
                 </div>
                 <div class="tab-pane" id="komersial" role="tabpanel" aria-labelledby="komersial-tab" tabindex="0">
                     <div class="my-3">
+                        <table id="tabel_komersial" class="table" style="font-size: small;">
+                            <thead>
+                                <tr>
+                                    <th>NO.</th>
+                                    <th>NO. BAPB</th>
+                                    <th>TANGGAL MASUK</th>
+                                    <th>SUPPLIER</th>
+                                    <th>PENGINPUT / PENGEDIT</th>
+                                    <th>TTD GUDANG</th>
+                                    <th>STATUS</th>
+                                    <th>NAMA KOMERSIAL</th>
+                                    <th>TTD KOMERSIAL</th>
+                                    <th>DIBUAT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="keuangan" role="tabpanel" aria-labelledby="keuangan-tab" tabindex="0">
+                    <div class="my-3">
                         <div class="row gy-4 align-items-end my-3">
                             <div class="col-lg-6 col-md-6col-sm-12">
                                 <div class="form-floating form-floating-outline">
-                                    <div id="reportrange" style="white-space: nowrap;">
-                                        <button class="btn btn-outline-secondary w-100 ">
-                                            <span class="fw-bold">FILTER&nbsp;DATE&nbsp;:&nbsp;</span>
-                                            <span class="date_daterange"></span>
-                                            <input type="date" id="start_date" name="start_date" hidden
-                                                value="">
-                                            <input type="date" id="end_date" name="end_date" hidden value="">
-                                        </button>
-                                    </div>
+                                    <button type="button" id="reportrange" class="btn btn-outline-secondary w-100"
+                                        style="white-space: nowrap;">
+                                        <span class="fw-bold">FILTER&nbsp;DATE&nbsp;:&nbsp;</span>
+                                        <span class="date_daterange"></span>
+                                    </button>
+                                    <input type="date" id="start_date" name="start_date" hidden value="">
+                                    <input type="date" id="end_date" name="end_date" hidden value="">
                                 </div>
                             </div>
 
@@ -120,17 +142,19 @@
                             </div>
                         </div>
                         <div id="table_komersial_div">
-                            <table id="tabel_komersial" class="table" style="font-size: small;">
+                            <table id="tabel_keuangan" class="table" style="font-size: small;">
                                 <thead>
                                     <tr>
                                         <th>NO.</th>
                                         <th>No. BAPB</th>
-                                        <th>PENGINPUT / PENGEDIT</th>
-                                        <th>TTD GUDANG</th>
+                                        <th>TANGGAL MASUK</th>
+                                        <th>NAMA SUPPLIER</th>
+                                        <th>GUDANG</th>
+                                        <th>KOMERSIAL</th>
                                         <th>STATUS</th>
-                                        <th>NAMA KOMERSIAL</th>
-                                        <th>TTD KOMERSIAL</th>
-                                        <th>DIBUAT</th>
+                                        <th>KEUANGAN</th>
+                                        <th>TTD KEUANGAN</th>
+                                        <th>DSISETUJUI PADA</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,9 +162,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane" id="keuangan" role="tabpanel" aria-labelledby="keuangan-tab" tabindex="0">
-                    ...
                 </div>
             </div>
         </div>
@@ -162,6 +183,19 @@
                         <label for="no_bapb" class="form-label">No. BAPB</label>
                         <input type="text" class="form-control" placeholder="No. BAPB" id="no_bapb_add"
                             name="no_bapb">
+                    </div>
+                    <div class="mb-2">
+                        <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
+                        <input type="date" class="form-control" id="tanggal_masuk_add" name="tanggal_masuk">
+                    </div>
+                    <div class="mb-2">
+                        <label for="id_supplier_add" class="form-label">Supplier</label>
+                        <select class="form-select" id="id_supplier_add" name="id_supplier">
+                            <option value=""></option>
+                            @foreach ($supplier as $sp)
+                                <option value="{{ $sp->id }}">{{ $sp->nama_supplier }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <!-- Canvas Container dengan Dashed Border & Accent Color -->
                     {{-- <div id="sig_add"
@@ -250,6 +284,15 @@
                         <input type="hidden" class="form-control" id="id_bapb_update" name="id_bapb_update">
                         <input type="text" class="form-control" id="no_bapb_update" name="no_bapb">
                     </div>
+                    <div class="mb-2">
+                        <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
+                        <input type="date" class="form-control" id="tanggal_masuk_update" name="tanggal_masuk">
+                    </div>
+                    <div class="mb-2">
+                        <label for="nama_supplier" class="form-label">Nama Supplier</label>
+                        <input type="text" class="form-control" id="nama_supplier_update" name="nama_supplier"
+                            disabled>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -260,19 +303,17 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
 
 <!-- DataTables JS -->
-<script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-
 <!-- Date Range Picker CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
 
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 <!-- Date Range Picker JS -->
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
 <script>
     $(document).on('input', 'input[type="text"]', function() {
         this.value = this.value.toUpperCase();
@@ -285,6 +326,12 @@
                 icon: 'error'
             })
         }
+        $('#id_supplier_add').select2({
+            dropdownParent: $('#modal_barang_masuk'),
+            width: '100%',
+            placeholder: 'Pilih Supplier',
+            allowClear: true
+        });
 
         $(document).on('click', '#btn_tambah_barang_masuk', function(e) {
             $('#modal_barang_masuk').modal('show');
@@ -297,8 +344,12 @@
         $(document).on('click', '#btn_update_datatable', function(e) {
             var id = $(this).data("id");
             var no_bapb = $(this).data("no_bapb");
+            var tanggal_masuk = $(this).data("tanggal_masuk");
+            var nama_supplier = $(this).data("nama_supplier");
             $('#id_bapb_update').val(id);
             $('#no_bapb_update').val(no_bapb);
+            $('#tanggal_masuk_update').val(tanggal_masuk);
+            $('#nama_supplier_update').val(nama_supplier);
             $('#modal_update_barang_masuk').modal('show');
         });
         // $(document).on('click', '#btn_tambah_barang_masuk', function() {
@@ -338,6 +389,14 @@
                     name: "no_bapb"
                 },
                 {
+                    data: "tanggal_masuk",
+                    name: "tanggal_masuk"
+                },
+                {
+                    data: "nama_supplier",
+                    name: "nama_supplier"
+                },
+                {
                     data: "nama_karyawan",
                     name: "nama_karyawan"
                 },
@@ -363,6 +422,73 @@
         $('#gudang-tab').on('click', function() {
             table.ajax.reload(null, false);
         });
+
+        const table2 = $('#tabel_komersial').DataTable({
+            processing: true,
+            responsive: true,
+            serverSide: true,
+
+            ajax: {
+                url: "{{ url('/barang_masuk_dt2/') }}" + '/' + "{{ $menu_id }}",
+                data: {
+                    start_date: '1000-01-01',
+                    end_date: '9999-12-31'
+                }
+            },
+            columns: [{
+                    data: "id",
+                    name: "id",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "no_bapb",
+                    name: "no_bapb"
+                },
+                {
+                    data: "tanggal_masuk",
+                    name: "tanggal_masuk"
+                },
+                {
+                    data: "nama_supplier",
+                    name: "nama_supplier"
+                },
+                {
+                    data: "nama_karyawan",
+                    name: "nama_karyawan"
+                },
+                {
+                    data: "ttd_karyawan",
+                    name: "ttd_karyawan"
+                },
+                {
+                    data: "status",
+                    name: "status"
+                },
+                {
+                    data: "nama_atasan2",
+                    name: "nama_atasan2"
+                },
+                {
+                    data: "ttd_atasan2",
+                    name: "ttd_atasan2"
+                },
+                {
+                    data: "created_at",
+                    name: "created_at"
+                },
+            ],
+            order: [
+                [1, 'asc']
+            ],
+        });
+        $('#komersial-tab').on('click', function() {
+            table2.ajax.reload(null, false);
+        });
+        // Filter table
 
         const start = moment().subtract(29, 'days');
         const end = moment();
@@ -398,19 +524,19 @@
 
             $('#table_komersial_div').show();
             $('#content_null').empty();
-            table2.ajax.reload(null, true);
+            table3.ajax.reload(null, true);
 
 
         });
         var start_date = $('#start_date').val() || '';
         var end_date = $('#end_date').val() || '';
-        const table2 = $('#tabel_komersial').DataTable({
+        const table3 = $('#tabel_keuangan').DataTable({
             processing: true,
             responsive: true,
             serverSide: true,
 
             ajax: {
-                url: "{{ url('/barang_masuk_dt2/') }}" + '/' + "{{ $menu_id }}",
+                url: "{{ url('/barang_masuk_dt3/') }}" + '/' + "{{ $menu_id }}",
                 data: function(d) {
                     d.start_date = $('#start_date').val();
                     d.end_date = $('#end_date').val();
@@ -430,37 +556,43 @@
                     name: "no_bapb"
                 },
                 {
+                    data: "tanggal_masuk",
+                    name: "tanggal_masuk"
+                },
+                {
+                    data: "nama_supplier",
+                    name: "nama_supplier"
+                },
+                {
                     data: "nama_karyawan",
                     name: "nama_karyawan"
-                },
-                {
-                    data: "ttd_karyawan",
-                    name: "ttd_karyawan"
-                },
-                {
-                    data: "status",
-                    name: "status"
                 },
                 {
                     data: "nama_atasan2",
                     name: "nama_atasan2"
                 },
                 {
-                    data: "ttd_atasan2",
-                    name: "ttd_atasan2"
+                    data: "status",
+                    name: "status"
                 },
                 {
-                    data: "created_at",
-                    name: "created_at"
+                    data: "nama_atasan3",
+                    name: "nama_atasan3"
+                },
+                {
+                    data: "ttd_atasan3",
+                    name: "ttd_atasan3"
+                },
+                {
+                    data: "waktu_atasan3",
+                    name: "waktu_atasan3"
                 },
             ],
             order: [
                 [1, 'asc']
             ],
         });
-        $('#komersial-tab').on('click', function() {
-            table2.ajax.reload(null, false);
-        });
+
         $(document).on('click', '#btn_create_barang_masuk', function(e) {
             e.preventDefault();
             // $('#signature_add').val(
@@ -500,6 +632,7 @@
                     });
 
                     $('#form_tambah_barang_masuk')[0].reset();
+                    $('#form_tambah_barang').find('select').trigger('change.select2');
                     // createSignaturePad.clear();
                     $('#modal_barang_masuk').modal('hide');
 

@@ -20,6 +20,11 @@ class BarangMasuk extends Model
 
         'no_bapb',
 
+        'tanggal_masuk',
+
+        'id_supplier',
+        'nama_supplier',
+
         'id_karyawan',
         'nama_karyawan',
         'ttd_karyawan',

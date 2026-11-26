@@ -38,7 +38,7 @@ class BarangMasukDetailKeuanganController extends Controller
             ->with('Menu.Children')
             ->orderBy('nama_menu')
             ->get();
-        return view('gudang/barang_masuk_keuangan/detail', compact(
+        return view('keuangan/barang_masuk_keuangan/detail', compact(
             'parent',
             'menu_id',
             'id_bapb',
@@ -71,30 +71,6 @@ class BarangMasukDetailKeuanganController extends Controller
                 $tgl = Carbon::parse($row->tanggal_masuk)->format('d-m-Y');
                 return $tgl;
             })
-            ->addColumn('aksi', function ($row) {
-                if ($row->status == 1 || $row->status == 2) {
-                    $action = '
-                            <button class="btn btn-warning m-1" id="btn_update_datatable"
-                                data-id="' . $row->id . '"
-                                data-tanggal_masuk="' . $row->tanggal_masuk . '"
-                                data-surat_jalan="' . $row->surat_jalan . '"
-                                data-nama_kategori="' . $row->nama_kategori . '"
-                                data-nama_supplier="' . $row->nama_supplier . '"
-                                data-nama_barang="' . $row->nama_barang . '"
-                                data-jumlah="' . $row->jumlah . '"
-                                data-satuan="' . $row->satuan . '"
-                                data-harga="' . $row->harga . '"
-                                data-keterangan ="' . $row->keterangan  . '"
-                                data-foto="' . $row->foto_surat_jalan . '">
-                                 <i class="bi bi-pencil"></i></button>';
-                    return $action;
-                } else {
-                    $action = '<button class="btn btn-warning m-1" id="btn_update_datatable" disabled>
-                                <i class="bi bi-pencil"></i>
-                            </button>';
-                    return $action;
-                }
-            })
             ->addColumn('foto_surat_jalan', function ($row) {
                 $action = '';
 
@@ -112,7 +88,6 @@ class BarangMasukDetailKeuanganController extends Controller
                 return $harga;
             })
             ->rawColumns([
-                'aksi',
                 'tanggal_masuk',
                 'foto_surat_jalan',
             ])
@@ -155,7 +130,7 @@ class BarangMasukDetailKeuanganController extends Controller
             $bapb = BarangMasuk::where('id', $request->id_bapb)->first();
 
             if ($bapb->ttd_atasan2) {
-                $oldSignaturePath = 'signatures/' . basename($bapb->ttd_atasan2);
+                $oldSignaturePath = 'signatures/' . basename($bapb->ttd_atasan3);
                 if (Storage::disk('public')->exists($oldSignaturePath)) {
                     Storage::disk('public')->delete($oldSignaturePath);
                 }
@@ -185,24 +160,24 @@ class BarangMasukDetailKeuanganController extends Controller
             }
 
             $bapb->update([
-                'id_atasan2' => $karyawan->id,
-                'nama_atasan2' => $karyawan->nama_karyawan,
-                'ttd_atasan2' => $fileName,
-                'status_atasan2' => 2,
+                'id_atasan3' => $karyawan->id,
+                'nama_atasan3' => $karyawan->nama_karyawan,
+                'ttd_atasan3' => $fileName,
+                'status_atasan3' => 3,
 
-                'status' => 2,
-                'waktu_atasan2' => now(),
+                'status' => 3,
+                'waktu_atasan3' => now(),
                 'updated_at' => now(),
             ]);
             BarangMasukDetail::where('id_barang_masuk', $request->id_bapb)->update([
-                'status' => 2
+                'status' => 3
             ]);
             Log::create([
                 'id' => Uuid::uuid4(),
                 'id_karyawan' => $karyawan->id,
                 'nama_karyawan' => $karyawan->nama_karyawan,
                 'aksi' => 'UPDATE',
-                'deskripsi' => 'Selesai memberikan harga pada BAPB ' . $request->no_bapb,
+                'deskripsi' => 'Selesai menyetujui BAPB ' . $bapb->no_bapb,
                 'id_menu' => $menu->id,
                 'nama_menu' => $menu->nama_menu,
                 'nama_tabel' => 'barang_masuk',
